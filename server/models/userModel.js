@@ -1,45 +1,24 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
 
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: true,
-    trim: true,
+    required: [true, 'Please provide your name'],
   },
   email: {
     type: String,
-    required: true,
+    required: [true, 'Please provide your email'],
     unique: true,
-    lowercase: true,
-    trim: true,
   },
   password: {
     type: String,
-    required: true,
-    minlength: 6,
+    required: [true, 'Please provide a password'],
+    select: false,
   },
-  confirmPassword: {
-    type: String,
-    required: true,
-    minlength: 6,
-    validate: {
-      validator: function (el) {
-        return el === this.password;
-      },
-      message: 'Passwords are not the same!',
-    },
+  age: {
+    type: Number,
+    required: [true, 'Please provide your age'],
   },
-});
-
-userSchema.pre('save', async function (next) {
-  if (!this.isModified('password')) return next();
-
-  this.password = await bcrypt.hash(this.password, 12);
-  
-  this.confirmPassword = undefined;
-  
-  next();
 });
 
 const User = mongoose.model('User', userSchema);
