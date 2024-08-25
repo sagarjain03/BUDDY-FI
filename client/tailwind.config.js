@@ -11,5 +11,8 @@ export default {
   fontFamily: {
     baloo: ['"Baloo 2"', 'cursive'],  
   },
+  strokeWidth: {
+    '2': '2px',
+  },
 }
 

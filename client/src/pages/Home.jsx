@@ -8,6 +8,7 @@ import Description from '../components/Description/Description';
 import Footer from '../components/Footer/Footer';
 import girl1 from '../assets/girl1.png';
 import girl2 from '../assets/girl2.png';
+import { Link } from 'react-router-dom';
 
 const Home = () => {
   
@@ -52,8 +53,8 @@ const Home = () => {
       <Header  position="top-28 left-20" />
       <String position="top-52 left-20" />
 
-      <Button color="bg-yellow-400" text="LOG-IN" position="top-[21rem] left-20" />
-      <Button color="bg-transparent" text="REGISTER+" position="top-[21rem] left-60" />
+      <Link to="/login"><Button color="bg-yellow-400" text="LOG-IN" position="top-[21rem] left-20" /></Link>
+      <Link to="/signup"><Button color="bg-transparent" text="REGISTER+" position="top-[21rem] left-60" /></Link>
 
       <Description />
       <String position="top-[28rem] left-20" />
