@@ -54,7 +54,7 @@ const Home = () => {
       <String position="top-52 left-20" />
 
       <Link to="/login"><Button color="bg-yellow-400" text="LOG-IN" position="top-[21rem] left-20" /></Link>
-      <Link to="/signup"><Button color="bg-transparent" text="REGISTER+" position="top-[21rem] left-60" /></Link>
+      <Link to="/register"><Button color="bg-transparent" text="REGISTER+" position="top-[21rem] left-60" /></Link>
 
       <Description />
       <String position="top-[28rem] left-20" />

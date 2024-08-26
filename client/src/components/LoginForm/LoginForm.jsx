@@ -47,7 +47,7 @@ const LoginForm = () => {
     setSuccess('');
 
     try {
-      const response = await fetch('http://localhost:5173/api/auth/login', {
+      const response = await fetch('http://localhost:5000/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -126,7 +126,7 @@ const LoginForm = () => {
         <div ref={signUpRef} className="mt-4 text-center text-sm">
           <p>
             Not registered yet?{' '}
-            <Link to="/signup" className="text-blue-500 hover:underline">
+            <Link to="/register" className="text-blue-500 hover:underline">
               Sign Up
             </Link>
           </p>

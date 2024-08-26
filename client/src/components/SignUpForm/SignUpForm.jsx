@@ -56,20 +56,11 @@ const SignUpForm = () => {
     }
 
     try {
-      const response = await axios.post('http://localhost:5173/api/auth/register', {
-        name: formData.name,
-        email: formData.email,
-        age: formData.age,
-        password: formData.password,
-      });
-
+      const response = await axios.post('http://localhost:5000/api/auth/register', formData);
       console.log(response.data); // Check API response
       navigate('/login');
     } catch (err) {
-      // Logging the actual error response to understand the issue
       console.error('Error response:', err.response?.data || err.message);
-      
-      // Set detailed error message if available
       setResponseError(err.response?.data?.message || 'Registration failed');
     }
   };
@@ -150,7 +141,7 @@ const SignUpForm = () => {
             {showPassword ? <AiFillEye /> : <AiFillEyeInvisible />}
           </div>
         </div>
-        <div className="relative ">
+        <div className="relative">
           <label className="block text-sm font-semibold">Confirm Password</label>
           <input
             ref={(el) => (inputRefs.current[4] = el)}

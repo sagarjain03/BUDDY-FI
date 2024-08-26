@@ -6,7 +6,7 @@ import SocialLogin from '../components/SocialLogin/SocialLogin';
 const Login = () => {
   return (
     <div className="flex">
-      <Sidebar />
+      <Sidebar text="LOG-IN"/>
       <div className="relative flex-1 flex justify-center items-center bg-yellow-300">
         <StickyNote 
           text={

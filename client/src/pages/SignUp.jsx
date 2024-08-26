@@ -6,7 +6,7 @@ import SignUpForm from '../components/SignUpForm/signUpForm';
 const SignUp = () => {
   return (
     <div className="flex">
-      <Sidebar />
+      <Sidebar text="Sign-up"/>
       <div className="relative flex-1 flex justify-center items-center bg-yellow-300">
         <StickyNote text={
             <>
