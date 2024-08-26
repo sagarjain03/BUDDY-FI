@@ -1,10 +1,16 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { Link } from 'react-router-dom';
 
 const LoginForm = () => {
   const formRef = useRef(null);
   const signUpRef = useRef(null);
+
+  // State for handling form inputs
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
   useEffect(() => {
     // Animate the form scale and opacity
@@ -34,6 +40,35 @@ const LoginForm = () => {
     );
   }, []);
 
+  // Handle form submission
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    setSuccess('');
+
+    try {
+      const response = await fetch('http://localhost:5173/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setSuccess('Login successful!');
+        alert('Login successful:', data);
+        // Handle successful login (e.g., redirect to dashboard, store token, etc.)
+      } else {
+        setError(data.message || 'Failed to log in');
+      }
+    } catch (error) {
+      setError('There was an error logging in. Please try again.',error);
+    }
+  };
+
   return (
     <div
       ref={formRef}
@@ -45,13 +80,20 @@ const LoginForm = () => {
       <h2 className="text-2xl font-bold mb-4">Buddy-Fi</h2>
       <p className="text-lg mb-6">Hi Welcome Back, 👋</p>
 
-      <form className="space-y-4">
+      {/* Display success or error message */}
+      {error && <p className="text-red-500">{error}</p>}
+      {success && <p className="text-green-500">{success}</p>}
+
+      <form className="space-y-4" onSubmit={handleSubmit}>
         <div>
           <label className="block text-sm font-semibold">E-Mail</label>
           <input
             type="email"
             placeholder="Enter Your Email Address..."
             className="w-full border border-gray-300 p-2 rounded-md"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
           />
         </div>
         <div>
@@ -60,6 +102,9 @@ const LoginForm = () => {
             type="password"
             placeholder="Password"
             className="w-full border border-gray-300 p-2 rounded-md"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
           />
         </div>
 
@@ -71,16 +116,14 @@ const LoginForm = () => {
           </div>
         </div>
 
-        <Link to="/login">
-          <button className="w-full bg-yellow-500 text-white p-2 rounded-md font-bold hover:bg-yellow-600">
-            Log-in
-          </button>
-        </Link>
-
-        <div
-          ref={signUpRef}
-          className="mt-4 text-center text-sm"
+        <button
+          type="submit"
+          className="w-full bg-yellow-500 text-white p-2 rounded-md font-bold hover:bg-yellow-600"
         >
+          Log-in
+        </button>
+
+        <div ref={signUpRef} className="mt-4 text-center text-sm">
           <p>
             Not registered yet?{' '}
             <Link to="/signup" className="text-blue-500 hover:underline">

@@ -2,9 +2,10 @@ import React, { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import stickyNoteImg from '../Stickynote/stickyNoteImg.png'
 import arrow from '../Stickynote/arrow.png'
+import arrow2 from '../Stickynote/arrow2.png'
 
 
-const StickyNote = () => {
+const StickyNote = ({positionNote,positionArrow,positionText,hide,hide2,text}) => {
   const noteRef = useRef(null);
   const stickyRef = useRef(null);
   const arrowRef = useRef(null);
@@ -37,10 +38,11 @@ const StickyNote = () => {
       // className="bg-yellow-200 shadow-orange-500 shadow-2xl w-48 h-48 absolute top-20 left-72 transform -translate-x-1/2 -rotate-12 p-2"
     >
       
-      <img src={stickyNoteImg} ref={stickyRef} alt="" className='absolute top-0 left-20 z-20' />
-      <img src={arrow} ref={arrowRef} alt="" className='absolute bottom-64 left-52 h-52 w-52 z-30'/>
-      <p ref={noteRef} className="text-xl font-semibold text-black text-center absolute top-20 left-36 z-30 -rotate-12">
-        Kuch Logon Ke Saath <br />Rehne Se Hi Sab Theek <br />Ho Jata Hai - Aditi
+      <img src={stickyNoteImg} ref={stickyRef} alt="" className={`absolute ${positionNote} z-20`} />
+      <img src={arrow} ref={arrowRef} alt="" className={`absolute ${positionArrow} h-52 w-52 z-30 ${hide}`}/>
+      <img src={arrow2} ref={arrowRef} alt="" className={`absolute ${positionArrow} h-40 w-68 z-30 ${hide2}`}/>
+      <p ref={noteRef} className={`text-md font-semibold text-black text-center absolute ${positionText} z-30 -rotate-12`}>
+        {text}
       </p>
 
     </div>
