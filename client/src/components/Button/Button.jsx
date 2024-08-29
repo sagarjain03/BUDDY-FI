@@ -1,8 +1,8 @@
 
 
-const Button = ({ text ,color,position}) => {
+const Button = ({ text ,color}) => {
   return (
-    <button className={`${color} hover:bg-yellow-500 px-6 py-2 text-lg font-semibold rounded-md shadow-md transition duration-200 absolute z-20 ${position}`}>
+    <button className={`${color} hover:opacity-30 px-14 py-3 text-xl font-semibold rounded-md shadow-md transition duration-200  z-20 `}>
       {text}
     </button>
   );

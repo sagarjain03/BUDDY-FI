@@ -1,16 +1,16 @@
 import React, { useRef, useEffect } from 'react';
 import gsap from 'gsap';
 
-const String = ({position}) => {
+const String = () => {
   const svgPathRef = useRef(null);
 
   useEffect(() => {
-    const initialPath = "M 10 100 Q 250 50 700 100"; // Shorter string
-    const finalPath = "M 10 100 Q 250 100 700 100"; // Shorter string
+    const initialPath = "M 10 100 Q 400 50 900 100"; // Longer string
+    const finalPath = "M 10 100 Q 400 100 900 100"; // Longer string
 
     const handleMouseMove = (event) => {
       const { clientX, clientY } = event;
-      const updatedPath = `M 10 100 Q ${clientX / 2} ${clientY / 2} 490 100`; // Adjusted for shorter string
+      const updatedPath = `M 10 100 Q ${clientX / 2} ${clientY / 2} 900 100`; // Adjusted for longer string
       gsap.to(svgPathRef.current, {
         attr: { d: updatedPath },
         duration: 0.3,
@@ -37,11 +37,11 @@ const String = ({position}) => {
   }, []);
 
   return (
-    <div className={`string overflow-hidden absolute ${position}`}>
-      <svg width="500" height="200" xmlns="http://www.w3.org/2000/svg">
+    <div className={`string overflow-hidden absolute bottom-14 left-64`}>
+      <svg width="1000" height="200" xmlns="http://www.w3.org/2000/svg">
         <path
           ref={svgPathRef}
-          d="M 10 100 Q 250 100 700 100" // Shorter initial path
+          d="M 10 100 Q 400 100 900 100" 
           stroke="black"
           fill="transparent"
         />
