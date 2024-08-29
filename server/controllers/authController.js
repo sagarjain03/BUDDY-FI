@@ -10,7 +10,7 @@ exports.register = async (req, res) => {
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { name, email, password, confirmPassword, age } = req.body;
+    const { name, email, password, confirmPassword, age, gender } = req.body;
 
     // Check if passwords match
     if (password !== confirmPassword) {
@@ -27,7 +27,7 @@ exports.register = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 12);
 
     // Create new user
-    const user = await User.create({ name, email, password: hashedPassword, age });
+    const user = await User.create({ name, email, password: hashedPassword, age, gender });
 
     // Remove password from response
     user.password = undefined;

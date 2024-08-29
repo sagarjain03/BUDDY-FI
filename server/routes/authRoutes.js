@@ -1,6 +1,6 @@
 const express = require('express');
+const { register, login } = require('../controllers/authController');
 const { check } = require('express-validator');
-const authController = require('../controllers/authController');
 
 const router = express.Router();
 
@@ -9,13 +9,13 @@ router.post(
   [
     check('name', 'Name is required').not().isEmpty(),
     check('email', 'Please include a valid email').isEmail(),
-    check('password', 'Password must be at least 6 characters long').isLength({ min: 6 }),
-    check('confirmPassword', 'Please confirm your password').not().isEmpty(),
-    check('age', 'Age is required').isInt({ min: 0 }),
+    check('password', 'Please enter a password with 8 or more characters').isLength({ min: 8 }),
+    check('age', 'Age is required').not().isEmpty(),
+    check('gender', 'Gender is required').not().isEmpty(),
   ],
-  authController.register
+  register
 );
 
-router.post('/login', authController.login);
+router.post('/login', login);
 
 module.exports = router;
