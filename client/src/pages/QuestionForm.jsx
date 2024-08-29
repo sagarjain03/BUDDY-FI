@@ -1,91 +1,34 @@
-import React, { useState } from 'react';
+import React from 'react'
+import Description from '../components/Description/Description'
+import QuestionPage from '../components/Questionpage/QuestionPage'
+import questionimg from '../assets/question.png'
 
+// const question1 = "What type of movie do you love watching on repeat?";
+//   const options1 = [
+//     'Romantic Movies',
+//     'Adventure/Travel Movies',
+//     'Comedies',
+//     'Action/Thriller Movies'
+//   ];
+
+//   const question2 = "How do you spend your ideal weekend?";
+//   const options2 = [
+//     'Hanging out with friends',
+//     'Exploring new places',
+//     'Binge-watching TV shows',
+//     'Reading a good book'
+//   ];
 const QuestionForm = () => {
-  // State to store current step and answers
-  const [step, setStep] = useState(1);
-  const [answers, setAnswers] = useState({
-    interest: '',
-    favoriteSubject: '',
-    hobbies: ''
-  });
-
-  // Handler for changing the answer
-  const handleChange = (e) => {
-    setAnswers({ ...answers, [e.target.name]: e.target.value });
-  };
-
-  // Move to the next question
-  const handleNext = () => {
-    setStep(step + 1);
-  };
-
-  // Render questions based on the current step
   return (
-    <div className="container mx-auto p-4">
-      <h2 className="text-xl font-bold mb-4">Tell us about your interest</h2>
-
-      {/* Step 1: Ask about interest */}
-      {step === 1 && (
-        <div>
-          <p className="mb-4">What is your main area of interest?</p>
-          <input
-            type="text"
-            name="interest"
-            value={answers.interest}
-            onChange={handleChange}
-            className="border p-2 mb-4 w-full"
-          />
-          <button onClick={handleNext} className="bg-blue-500 text-white p-2 rounded-md">
-            Next
-          </button>
-        </div>
-      )}
-
-      {/* Step 2: Ask about favorite subject */}
-      {step === 2 && (
-        <div>
-          <p className="mb-4">What is your favorite subject?</p>
-          <input
-            type="text"
-            name="favoriteSubject"
-            value={answers.favoriteSubject}
-            onChange={handleChange}
-            className="border p-2 mb-4 w-full"
-          />
-          <button onClick={handleNext} className="bg-blue-500 text-white p-2 rounded-md">
-            Next
-          </button>
-        </div>
-      )}
-
-      {/* Step 3: Ask about hobbies */}
-      {step === 3 && (
-        <div>
-          <p className="mb-4">What are your hobbies?</p>
-          <input
-            type="text"
-            name="hobbies"
-            value={answers.hobbies}
-            onChange={handleChange}
-            className="border p-2 mb-4 w-full"
-          />
-          <button onClick={handleNext} className="bg-blue-500 text-white p-2 rounded-md">
-            Finish
-          </button>
-        </div>
-      )}
-
-      {/* Step 4: Summary */}
-      {step === 4 && (
-        <div>
-          <h3 className="text-lg font-bold mb-4">Thanks for your answers!</h3>
-          <p><strong>Interest:</strong> {answers.interest}</p>
-          <p><strong>Favorite Subject:</strong> {answers.favoriteSubject}</p>
-          <p><strong>Hobbies:</strong> {answers.hobbies}</p>
-        </div>
-      )}
+    <div 
+      className='flex justify-around align-middle p-4 bg-cover bg-center'
+      style={{ backgroundImage: `url(${questionimg})` }}
+    >
+      <Description text="Discover Your Vibe Tell Us About Your Interests"/>
+      <QuestionPage  />
+     
     </div>
-  );
-};
+  )
+}
 
-export default QuestionForm;
+export default QuestionForm

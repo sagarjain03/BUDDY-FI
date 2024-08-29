@@ -1,3 +1,4 @@
+import QuestionPage from "./components/Questionpage/QuestionPage";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import QuestionForm from "./pages/QuestionForm";
@@ -22,8 +23,9 @@ const router = createBrowserRouter([
 const App = () => {
   return (
     <div>
-      <RouterProvider router={router} />
-      {/* <QuestionForm/> */}
+      {/* <RouterProvider router={router} /> */}
+      <QuestionForm/>
+   
     </div>
   );
 };
