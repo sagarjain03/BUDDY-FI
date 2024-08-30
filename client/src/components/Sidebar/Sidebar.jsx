@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 
-const Sidebar = () => {
+const Sidebar = ({text}) => {
   const textRef = useRef(null);
 
   useEffect(() => {
@@ -18,7 +18,7 @@ const Sidebar = () => {
         ref={textRef}
         className="text-8xl font-extrabold transform -rotate-90 text-transparent bg-clip-text bg-gradient-to-t from-yellow-600 to-orange-500"
       >
-        LOG-IN
+        {text}
       </h1>
     </div>
   );
