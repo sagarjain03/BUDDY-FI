@@ -26,6 +26,10 @@ const userSchema = new mongoose.Schema({
     enum: ['male', 'female'],
     required: [true, 'Please provide your gender'],
   },
+  answers: {
+    type: [String],  
+    default: [],     
+  },
 });
 
 const User = mongoose.model('User', userSchema);
