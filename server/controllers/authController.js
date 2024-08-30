@@ -2,7 +2,6 @@ const User = require('../models/userModel');
 const bcrypt = require('bcrypt');
 const { validationResult } = require('express-validator');
 
-// Register user
 exports.register = async (req, res) => {
   try {
     const errors = validationResult(req);
@@ -70,6 +69,38 @@ exports.login = async (req, res) => {
       data: {
         user,
       },
+    });
+  } catch (err) {
+    res.status(500).json({
+      status: 'error',
+      message: err.message,
+    });
+  }
+};
+
+// Submit answers
+exports.submitAnswers = async (req, res) => {
+  try {
+    const { email, answers } = req.body;
+
+    // Validate input
+    if (!email || !answers) {
+      return res.status(400).json({ message: 'Email and answers are required' });
+    }
+
+    // Find the user by email
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Update user's answers
+    user.answers = answers;
+    await user.save();
+
+    res.status(200).json({
+      status: 'success',
+      message: 'Answers updated successfully',
     });
   } catch (err) {
     res.status(500).json({
