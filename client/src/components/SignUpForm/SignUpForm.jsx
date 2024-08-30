@@ -51,24 +51,24 @@ const SignUpForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Frontend validation for matching passwords
+   
     if (formData.password !== formData.confirmPassword) {
       setError("Passwords don't match");
       return;
     }
 
     try {
-      // Send both password and confirmPassword fields to the backend
+    
       const response = await axios.post('http://localhost:5000/api/auth/register', {
         name: formData.name,
         email: formData.email,
         age: formData.age,
         password: formData.password,
-        confirmPassword: formData.confirmPassword, // Include confirmPassword if required by backend
+        confirmPassword: formData.confirmPassword, 
         gender: formData.gender,
       });
 
-      console.log(response.data); // Log the response for debugging
+      console.log(response.data); 
       navigate('/login');
     } catch (err) {
       console.error('Error response:', err.response?.data || err.message);

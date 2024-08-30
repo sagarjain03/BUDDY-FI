@@ -108,6 +108,14 @@ const questions = [
 
 const QuestionPage = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [selectedOptions, setSelectedOptions] = useState({});
+
+  const handleOptionSelect = (option) => {
+    setSelectedOptions({
+      ...selectedOptions,
+      [currentIndex]: option
+    });
+  };
 
   const handlePrevious = () => {
     if (currentIndex > 0) {
@@ -118,6 +126,27 @@ const QuestionPage = () => {
   const handleNext = () => {
     if (currentIndex < questions.length - 1) {
       setCurrentIndex(currentIndex + 1);
+    }
+  };
+
+  const handleSubmit = async () => {
+    
+    try {
+      const response = await fetch('/api/submit-answers', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(selectedOptions),
+      });
+      if (response.ok) {
+        alert('Answers submitted successfully!');
+      } else {
+        alert('Failed to submit answers.');
+      }
+    } catch (error) {
+      console.error('Error submitting answers:', error);
+      alert('Error submitting answers.');
     }
   };
 
@@ -134,7 +163,13 @@ const QuestionPage = () => {
 
       <div className="grid grid-cols-2 gap-3">
         {options.map((option, index) => (
-          <div key={index} className="relative group flex flex-col items-center">
+          <div
+            key={index}
+            className={`relative group flex flex-col items-center cursor-pointer ${
+              selectedOptions[currentIndex] === option ? 'border-4 border-blue-500' : ''
+            }`}
+            onClick={() => handleOptionSelect(option)}
+          >
             <img
               src={optionImages[option]}
               alt={option}
@@ -147,20 +182,30 @@ const QuestionPage = () => {
 
       {/* Arrows for navigation */}
       <div className="flex items-center justify-between mt-6">
-        <button 
-          onClick={handlePrevious} 
+        <button
+          onClick={handlePrevious}
           disabled={currentIndex === 0}
           className="bg-white p-3 rounded-full shadow-md mx-2 text-2xl"
         >
           ⬅️
         </button>
-        <button 
-          onClick={handleNext} 
-          disabled={currentIndex === questions.length - 1}
-          className="bg-white p-3 rounded-full shadow-md mx-2 text-2xl"
-        >
-          ➡️
-        </button>
+        {currentIndex < questions.length - 1 ? (
+          <button
+            onClick={handleNext}
+            disabled={!selectedOptions[currentIndex]}
+            className="bg-white p-3 rounded-full shadow-md mx-2 text-2xl"
+          >
+            ➡️
+          </button>
+        ) : (
+          <button
+            onClick={handleSubmit}
+            disabled={!selectedOptions[currentIndex]}
+            className="bg-green-500 p-3 rounded-full shadow-md mx-2 text-2xl"
+          >
+            Submit
+          </button>
+        )}
       </div>
     </div>
   );
