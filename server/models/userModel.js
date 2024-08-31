@@ -27,8 +27,9 @@ const userSchema = new mongoose.Schema({
     required: [true, 'Please provide your gender'],
   },
   hobbies: {
-    type: [String], // Change "answers" to "hobbies" and make it an array of strings
-    default: [], // Default value is an empty array
+    type: Map,
+    of: String, // Each hobby is stored as a string
+    required: true,
   },
 });
 
