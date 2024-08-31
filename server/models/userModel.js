@@ -26,13 +26,13 @@ const userSchema = new mongoose.Schema({
     enum: ['male', 'female'],
     required: [true, 'Please provide your gender'],
   },
-  answers: [{  // New field to store answers
-    type: String
-  }]
+  hobbies: {
+    type: Map,
+    of: String, // Each hobby is stored as a string
+    required: false,
+  },
 });
 
 const User = mongoose.model('User', userSchema);
 
 module.exports = User;
-
-

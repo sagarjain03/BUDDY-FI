@@ -79,14 +79,14 @@ exports.login = async (req, res) => {
   }
 };
 
-// Submit answers
-exports.submitAnswers = async (req, res) => {
+// Submit hobbies
+exports.submitHobbies = async (req, res) => {
   try {
-    const { email, answers } = req.body;
+    const { email, hobbies } = req.body;
 
     // Validate input
-    if (!email || !answers) {
-      return res.status(400).json({ message: 'Email and answers are required' });
+    if (!email || !hobbies) {
+      return res.status(400).json({ message: 'Email and hobbies are required' });
     }
 
     // Find the user by email
@@ -95,13 +95,13 @@ exports.submitAnswers = async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    // Update user's answers
-    user.answers = answers;
+    // Update user's hobbies
+    user.hobbies = hobbies;
     await user.save();
 
     res.status(200).json({
       status: 'success',
-      message: 'Answers updated successfully',
+      message: 'Hobbies updated successfully',
     });
   } catch (err) {
     res.status(500).json({
@@ -110,4 +110,3 @@ exports.submitAnswers = async (req, res) => {
     });
   }
 };
-
