@@ -26,12 +26,13 @@ const userSchema = new mongoose.Schema({
     enum: ['male', 'female'],
     required: [true, 'Please provide your gender'],
   },
-  answers: {
-    type: [String],  
-    default: [],     
+  hobbies: {
+    type: [String], // Change "answers" to "hobbies" and make it an array of strings
+    default: [], // Default value is an empty array
   },
 });
 
 const User = mongoose.model('User', userSchema);
 
 module.exports = User;
+
