@@ -1,7 +1,10 @@
 const User = require('../models/userModel');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken'); // Import jsonwebtoken
 const { validationResult } = require('express-validator');
+require('dotenv').config(); // Load environment variables
 
+// Register user
 exports.register = async (req, res) => {
   try {
     const errors = validationResult(req);
@@ -28,6 +31,9 @@ exports.register = async (req, res) => {
     // Create new user
     const user = await User.create({ name, email, password: hashedPassword, age, gender });
 
+    // Generate JWT token
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
     // Remove password from response
     user.password = undefined;
 
@@ -35,6 +41,7 @@ exports.register = async (req, res) => {
       status: 'success',
       data: {
         user,
+        token, // Include the token in the response
       },
     });
   } catch (err) {
@@ -61,6 +68,9 @@ exports.login = async (req, res) => {
       return res.status(401).json({ message: 'Incorrect email or password' });
     }
 
+    // Generate JWT token
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
     // Remove password from response
     user.password = undefined;
 
@@ -68,6 +78,7 @@ exports.login = async (req, res) => {
       status: 'success',
       data: {
         user,
+        token, // Include the token in the response
       },
     });
   } catch (err) {
@@ -78,29 +89,31 @@ exports.login = async (req, res) => {
   }
 };
 
-// Submit answers
-exports.submitAnswers = async (req, res) => {
+// Submit hobbies
+exports.submitHobbies = async (req, res) => {
   try {
-    const { email, answers } = req.body;
+    const { token, hobbies } = req.body;
 
-    // Validate input
-    if (!email || !answers) {
-      return res.status(400).json({ message: 'Email and answers are required' });
-    }
+    // Verify token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const userId = decoded.id;
 
-    // Find the user by email
-    const user = await User.findOne({ email });
+    // Find user and update hobbies
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { hobbies },
+      { new: true, runValidators: true }
+    );
+
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    // Update user's answers
-    user.answers = answers;
-    await user.save();
-
     res.status(200).json({
       status: 'success',
-      message: 'Answers updated successfully',
+      data: {
+        user,
+      },
     });
   } catch (err) {
     res.status(500).json({
