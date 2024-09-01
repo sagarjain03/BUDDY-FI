@@ -50,15 +50,13 @@ const SignUpForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-   
+  
     if (formData.password !== formData.confirmPassword) {
       setError("Passwords don't match");
       return;
     }
-
+  
     try {
-    
       const response = await axios.post('http://localhost:5000/api/auth/register', {
         name: formData.name,
         email: formData.email,
@@ -67,14 +65,20 @@ const SignUpForm = () => {
         confirmPassword: formData.confirmPassword, 
         gender: formData.gender,
       });
-
-      console.log(response.data); 
+  
+      console.log(response.data);
+  
+      // Store the email in local storage
+      localStorage.setItem('registeredEmail', formData.email);
+  
+      // Navigate to the next page after successful registration
       navigate('/submit-answer');
     } catch (err) {
       console.error('Error response:', err.response?.data || err.message);
       setResponseError(err.response?.data?.message || 'Registration failed');
     }
   };
+  
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-transparent relative">

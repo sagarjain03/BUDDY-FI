@@ -1,10 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const LoginForm = () => {
   const formRef = useRef(null);
   const signUpRef = useRef(null);
+  const navigate = useNavigate(); // Use navigate for redirection
 
   // State for handling form inputs
   const [email, setEmail] = useState('');
@@ -21,16 +22,13 @@ const LoginForm = () => {
     );
 
     // Animate the shadow to create a moving effect
-    gsap.to(
-      formRef.current,
-      {
-        boxShadow: '0px 0px 15px rgba(0, 0, 0, 0.5)',
-        duration: 1.5,
-        repeat: -1,
-        yoyo: true,
-        ease: 'sine.inOut'
-      }
-    );
+    gsap.to(formRef.current, {
+      boxShadow: '0px 0px 15px rgba(0, 0, 0, 0.5)',
+      duration: 1.5,
+      repeat: -1,
+      yoyo: true,
+      ease: 'sine.inOut',
+    });
 
     // Animate the Sign Up text with a bounce effect
     gsap.fromTo(
@@ -45,7 +43,7 @@ const LoginForm = () => {
     e.preventDefault();
     setError('');
     setSuccess('');
-  
+
     try {
       const response = await fetch('http://localhost:5000/api/auth/login', {
         method: 'POST',
@@ -54,14 +52,14 @@ const LoginForm = () => {
         },
         body: JSON.stringify({ email, password }),
       });
-  
+
       const data = await response.json();
-  
+
       if (response.ok) {
         localStorage.setItem('token', data.token); // Save token
         setSuccess('Login successful!');
         alert('Login successful!');
-        navigate('/welcome'); // Redirect to a protected route
+        navigate('/welcome'); // Redirect to /welcome after successful login
       } else {
         setError(data.message || 'Failed to log in');
       }
@@ -69,7 +67,6 @@ const LoginForm = () => {
       setError('There was an error logging in. Please try again.');
     }
   };
-  
 
   return (
     <div
