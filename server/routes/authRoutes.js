@@ -18,6 +18,6 @@ router.post(
 
 router.post('/login', login);
 
-router.post('/submit-answers', submitHobbies);
+router.post('/submit-answers', submitHobbies);  // Route remains unchanged
 
 module.exports = router;
