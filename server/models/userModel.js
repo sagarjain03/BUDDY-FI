@@ -29,11 +29,10 @@ const userSchema = new mongoose.Schema({
   hobbies: {
     type: Map,
     of: String, // Each hobby is stored as a string
-    required: true,
+    required: false,
   },
 });
 
 const User = mongoose.model('User', userSchema);
 
 module.exports = User;
-

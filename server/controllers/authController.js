@@ -1,8 +1,6 @@
 const User = require('../models/userModel');
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken'); // Import jsonwebtoken
 const { validationResult } = require('express-validator');
-require('dotenv').config(); // Load environment variables
 
 // Register user
 exports.register = async (req, res) => {
@@ -31,9 +29,6 @@ exports.register = async (req, res) => {
     // Create new user
     const user = await User.create({ name, email, password: hashedPassword, age, gender });
 
-    // Generate JWT token
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-
     // Remove password from response
     user.password = undefined;
 
@@ -41,7 +36,6 @@ exports.register = async (req, res) => {
       status: 'success',
       data: {
         user,
-        token, // Include the token in the response
       },
     });
   } catch (err) {
@@ -68,9 +62,6 @@ exports.login = async (req, res) => {
       return res.status(401).json({ message: 'Incorrect email or password' });
     }
 
-    // Generate JWT token
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-
     // Remove password from response
     user.password = undefined;
 
@@ -78,7 +69,6 @@ exports.login = async (req, res) => {
       status: 'success',
       data: {
         user,
-        token, // Include the token in the response
       },
     });
   } catch (err) {
@@ -92,28 +82,26 @@ exports.login = async (req, res) => {
 // Submit hobbies
 exports.submitHobbies = async (req, res) => {
   try {
-    const { token, hobbies } = req.body;
+    const { email, hobbies } = req.body;
 
-    // Verify token
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const userId = decoded.id;
+    // Validate input
+    if (!email || !hobbies) {
+      return res.status(400).json({ message: 'Email and hobbies are required' });
+    }
 
-    // Find user and update hobbies
-    const user = await User.findByIdAndUpdate(
-      userId,
-      { hobbies },
-      { new: true, runValidators: true }
-    );
-
+    // Find the user by email
+    const user = await User.findOne({ email });
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
 
+    // Update user's hobbies
+    user.hobbies = hobbies;
+    await user.save();
+
     res.status(200).json({
       status: 'success',
-      data: {
-        user,
-      },
+      message: 'Hobbies updated successfully',
     });
   } catch (err) {
     res.status(500).json({
