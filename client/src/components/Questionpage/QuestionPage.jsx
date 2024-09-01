@@ -20,6 +20,14 @@ import bingwatch from '../../assets/weekends/bingwatch.png';
 import explore from '../../assets/weekends/explore.png';
 import hangout from '../../assets/weekends/hangout.png';
 import reading from '../../assets/weekends/reading.png';
+import face from '../../assets/communicate/face.png'
+import voice from '../../assets/communicate/voice.png'
+import text from '../../assets/communicate/text.png'
+import video from '../../assets/communicate/video.png'
+import sgcf from '../../assets/social/sgcf.png'
+import bp from '../../assets/social/bp.png'
+import one from '../../assets/social/one.png'
+import diff from '../../assets/social/diff.png'
 
 // Map images to options for easier management
 const optionImages = {
@@ -35,10 +43,10 @@ const optionImages = {
   'Classical Music': jazz,
   'Rock/Alternative': rock,
   'Hip-Hop/Rap': rap,
-  'In-person hangouts': friends,
-  'Video Calls': avengers,
-  'Texting/Messaging': titanic,
-  'Voice Notes': znmd,
+  'In-person hangouts': face,
+  'Video Calls': video,
+  'Texting/Messaging': text,
+  'Voice Notes': voice,
   'Beach Relaxation': beach,
   'Mountain Trekking': mountain,
   'City Exploration': city,
@@ -47,6 +55,10 @@ const optionImages = {
   'Working out or going for a run': exercise,
   'Meditating or practicing mindfulness': meditation,
   'Powering through with determination': powering,
+  'Small gathering with close friends':sgcf,
+  'Big parties or events':bp,
+  'Quiet one-on-one conversations':one,
+  'Hanging out with different groups':diff
 };
 
 // List of questions and options
@@ -73,7 +85,7 @@ const questions = [
     question: "What type of music do you vibe to?",
     options: [
       'Pop Hits',
-      'Classical Music',
+      'Jazz',
       'Rock/Alternative',
       'Hip-Hop/Rap'
     ]
@@ -103,6 +115,15 @@ const questions = [
       'Working out or going for a run',
       'Meditating or practicing mindfulness',
       'Powering through with determination'
+    ]
+  },
+  {
+    question: "What kind of social setting do you prefer ?",
+    options: [
+      'Small gathering with close friends',
+      'Big parties or events',
+      'Quiet one-on-one conversations',
+      'Hanging out with different groups'
     ]
   }
 ];
@@ -149,6 +170,7 @@ const QuestionPage = () => {
           hobby4: selectedOptions[3], // Example for two hobby questions
           hobby5: selectedOptions[4], // Example for two hobby questions
           hobby6: selectedOptions[5], // Example for two hobby questions
+          hobby7: selectedOptions[6], // Example for two hobby questions
         },
       };
   
