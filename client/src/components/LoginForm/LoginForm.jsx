@@ -45,7 +45,7 @@ const LoginForm = () => {
     e.preventDefault();
     setError('');
     setSuccess('');
-
+  
     try {
       const response = await fetch('http://localhost:5000/api/auth/login', {
         method: 'POST',
@@ -54,20 +54,22 @@ const LoginForm = () => {
         },
         body: JSON.stringify({ email, password }),
       });
-
+  
       const data = await response.json();
-
+  
       if (response.ok) {
+        localStorage.setItem('token', data.token); // Save token
         setSuccess('Login successful!');
-        alert('Login successful:', data);
-        // Handle successful login (e.g., redirect to dashboard, store token, etc.)
+        alert('Login successful!');
+        navigate('/welcome'); // Redirect to a protected route
       } else {
         setError(data.message || 'Failed to log in');
       }
     } catch (error) {
-      setError('There was an error logging in. Please try again.',error);
+      setError('There was an error logging in. Please try again.');
     }
   };
+  
 
   return (
     <div
