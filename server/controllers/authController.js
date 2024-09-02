@@ -128,3 +128,34 @@ exports.showUsers = async (req, res) => {
     });
   }
 };
+
+exports.updateLocation = async (req, res) => {
+  try {
+    const { email, longitude, latitude } = req.body;
+
+    if (!email || longitude == null || latitude == null) {
+      return res.status(400).json({ message: 'send everything bruh email,longitude and latitude'});
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: 'cannot find user' });
+    }
+
+    user.location = { longitude, latitude };
+    await user.save();
+
+    res.status(200).json({
+      status: 'success',
+      message: 'Location updated successfully',
+      data: {
+        location: user.location
+      }
+    });
+  } catch (err) {
+    res.status(500).json({
+      status: 'error',
+      message: err.message,
+    });
+  }
+};
