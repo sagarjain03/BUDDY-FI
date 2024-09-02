@@ -1,5 +1,5 @@
 const express = require('express');
-const { register, login, submitHobbies } = require('../controllers/authController');
+const { register, login, submitHobbies, showUsers } = require('../controllers/authController');
 const { check } = require('express-validator');
 
 const router = express.Router();
@@ -18,6 +18,7 @@ router.post(
 
 router.post('/login', login);
 
-router.post('/submit-answers', submitHobbies);  // Route remains unchanged
+router.post('/submit-answers', submitHobbies);  
 
+router.get('/show-users', showUsers);  
 module.exports = router;
