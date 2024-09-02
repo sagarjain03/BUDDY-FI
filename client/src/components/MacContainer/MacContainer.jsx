@@ -6,7 +6,7 @@ import * as THREE from "three"
 
 const MacContainer = () => {
   let model = useGLTF("./mac.glb");
-  let tex = useTexture("./bhai.jpg")
+  let tex = useTexture("./jane.jpg")
   let meshes = {};
   model.scene.traverse((e) => {
  
@@ -27,7 +27,7 @@ const MacContainer = () => {
     meshes.screen.rotation.x = THREE.MathUtils.degToRad(180 - data.offset*90);
   })
   return (
-    <group position={[0,-10,20]}>
+    <group position={[0,-10,20]} >
       <primitive object={model.scene}/> 
     </group>
   )
