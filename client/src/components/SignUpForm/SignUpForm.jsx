@@ -84,9 +84,9 @@ const SignUpForm = () => {
     <div className="min-h-screen flex items-center justify-center bg-transparent relative">
       <div
         ref={formRef}
-        className="bg-white bg-opacity-20 backdrop-blur-md p-8 rounded-lg shadow-lg w-96 mx-auto relative"
+        className="border-gray-500 border-2 bg-transparent bg-opacity-20 backdrop-blur-sm p-8 rounded-lg shadow-lg w-96 mx-auto relative "
       >
-        <h2 className="text-2xl font-semibold text-white mb-2">Buddy-Fi</h2>
+        <h2 className="text-2xl font-semibold text-black mb-2 font-baloo">Buddy-Fi</h2>
         <p className="font-semibold mb-4 text-md">
           <span>MUCHO GUSTO - 😃 Create Your Account</span>
         </p>
@@ -101,7 +101,7 @@ const SignUpForm = () => {
               type="text"
               name="name"
               placeholder="Enter Your Name"
-              className="w-full border-2 border-transparent bg-white bg-opacity-30 text-white placeholder-gray-300 p-3 rounded-lg focus:border-yellow-400"
+              className="w-full border-2 border-gray-400 bg-white bg-opacity-30 text-black placeholder-gray-700 p-3 rounded-lg focus:border-yellow-400"
               value={formData.name}
               onChange={handleChange}
               required
@@ -113,7 +113,7 @@ const SignUpForm = () => {
               type="email"
               name="email"
               placeholder="Enter Your Email Address"
-              className="w-full border-2 border-transparent bg-white bg-opacity-30 text-white placeholder-gray-300 p-3 rounded-lg focus:border-yellow-400"
+              className="w-full border-2 border-gray-400 bg-white bg-opacity-30 text-white placeholder-gray-700 p-3 rounded-lg focus:border-yellow-400"
               value={formData.email}
               onChange={handleChange}
               required
@@ -125,14 +125,14 @@ const SignUpForm = () => {
               type="number"
               name="age"
               placeholder="Age"
-              className="w-1/3 border-2 border-transparent bg-white bg-opacity-30 text-white placeholder-gray-300 p-3 rounded-lg focus:border-yellow-400"
+              className="w-1/3 border-2 border-gray-400 bg-white bg-opacity-30 text-white placeholder-gray-700 p-3 rounded-lg focus:border-yellow-400"
               value={formData.age}
               onChange={handleChange}
               required
             />
             <div className="flex items-center space-x-3">
-              <span className="text-white text-sm font-semibold">GENDER</span>
-              <label className="text-white">
+              <span className="text-gray-600 text-sm font-semibold">GENDER</span>
+              <label className="text-gray-700">
                 <input
                   type="radio"
                   name="gender"
@@ -141,7 +141,7 @@ const SignUpForm = () => {
                   onChange={handleChange}
                 /> MALE
               </label>
-              <label className="text-white">
+              <label className="text-gray-700">
                 <input
                   type="radio"
                   name="gender"
@@ -158,7 +158,7 @@ const SignUpForm = () => {
               type={showPassword ? 'text' : 'password'}
               name="password"
               placeholder="Password"
-              className="w-full border-2 border-transparent bg-white bg-opacity-30 text-white placeholder-gray-300 p-1 rounded-lg focus:border-yellow-400"
+              className="w-full border-2 border-gray-400 bg-white bg-opacity-30 text-white placeholder-gray-700 p-1 rounded-lg focus:border-yellow-400"
               value={formData.password}
               onChange={handleChange}
               required
@@ -176,7 +176,7 @@ const SignUpForm = () => {
               type={showConfirmPassword ? 'text' : 'password'}
               name="confirmPassword"
               placeholder="Confirm Password"
-              className="w-full border-2 border-transparent bg-white bg-opacity-30 text-white placeholder-gray-300 p-1 rounded-lg focus:border-yellow-400"
+              className="w-full border-2 border-gray-400 bg-white bg-opacity-30 text-white placeholder-gray-700 p-1 rounded-lg focus:border-yellow-400"
               value={formData.confirmPassword}
               onChange={handleChange}
               required
@@ -189,11 +189,11 @@ const SignUpForm = () => {
             </div>
           </div>
           <div className="flex justify-between items-center text-sm text-white">
-            <label className="flex items-center">
+            <label className="flex items-center text-blue-400">
               <input type="checkbox" className="mr-2" required />
               Terms And Conditions
             </label>
-            <label className="flex items-center">
+            <label className="flex items-center text-blue-400">
               <input type="checkbox" className="mr-2" required />
               Privacy Policy
             </label>
@@ -222,7 +222,7 @@ const SignUpForm = () => {
           </div>
           <p className="mt-4">
             Already Have An Account?{' '}
-            <Link to="/login" className="text-blue-200 hover:underline">
+            <Link to="/login" className="text-blue-400 hover:underline">
               Login
             </Link>
           </p>
