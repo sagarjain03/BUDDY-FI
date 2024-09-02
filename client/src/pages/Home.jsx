@@ -11,7 +11,7 @@ const Home = () => {
     <div
       className="min-h-screen overflow-hidden flex flex-col"
       style={{
-        backgroundImage: `url(https://images.unsplash.com/photo-1506452601243-1add60811bfd?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)`, // Set background image
+        backgroundImage: "url('/src/assets/home-back.png')", // Set background image
         backgroundSize: 'cover', // Make the image cover the entire area
         backgroundPosition: 'center', // Center the background image
         

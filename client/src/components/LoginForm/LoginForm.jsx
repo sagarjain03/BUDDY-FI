@@ -71,13 +71,13 @@ const LoginForm = () => {
   return (
     <div
       ref={formRef}
-      className="bg-white border-2 border-orange-500 p-8 rounded-lg shadow-lg w-96 mx-auto mt-12"
+      className="border-gray-500 border-2 bg-transparent bg-opacity-20 backdrop-blur-sm p-8 rounded-lg shadow-lg w-96 mx-auto relative "
       style={{
         boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.3)',
       }}
     >
-      <h2 className="text-2xl font-bold mb-4">Buddy-Fi</h2>
-      <p className="text-lg mb-6">Hi Welcome Back, 👋</p>
+      <h2 className="text-2xl font-bold mb-4 text-white ">Buddy-Fi</h2>
+      <p className="text-lg mb-6 text-white">Hi Welcome Back, 👋</p>
 
       {/* Display success or error message */}
       {error && <p className="text-red-500">{error}</p>}
@@ -85,7 +85,7 @@ const LoginForm = () => {
 
       <form className="space-y-4" onSubmit={handleSubmit}>
         <div>
-          <label className="block text-sm font-semibold">E-Mail</label>
+          <label className="block text-sm font-semibold text-white">E-Mail</label>
           <input
             type="email"
             placeholder="Enter Your Email Address..."
@@ -96,7 +96,7 @@ const LoginForm = () => {
           />
         </div>
         <div>
-          <label className="block text-sm font-semibold">Password</label>
+          <label className="block text-sm font-semibold text-white">Password</label>
           <input
             type="password"
             placeholder="Password"
@@ -111,7 +111,7 @@ const LoginForm = () => {
           <Link to="/" className="text-orange-500 text-sm">Forgot Your Password?</Link>
           <div className="flex items-center">
             <input type="checkbox" className="mr-2" />
-            <span className="text-sm">Remember Me</span>
+            <span className="text-sm text-white">Remember Me</span>
           </div>
         </div>
 
@@ -123,7 +123,7 @@ const LoginForm = () => {
         </button>
 
         <div ref={signUpRef} className="mt-4 text-center text-sm">
-          <p>
+          <p className="text-white">
             Not registered yet?{' '}
             <Link to="/register" className="text-blue-500 hover:underline">
               Sign Up
