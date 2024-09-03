@@ -18,7 +18,7 @@ const Login = () => {
         
         <div>
           <LoginForm />
-          <SocialLogin />
+          {/* <SocialLogin /> */}
         </div>
       </div>
     </div>
