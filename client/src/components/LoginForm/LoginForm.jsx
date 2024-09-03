@@ -1,11 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { Link, useNavigate } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faGoogle, faFacebook, faInstagram } from '@fortawesome/free-brands-svg-icons';
 
 const LoginForm = () => {
   const formRef = useRef(null);
   const signUpRef = useRef(null);
-  const navigate = useNavigate(); // Use navigate for redirection
+  const iconsRef = useRef(null);
+  const navigate = useNavigate();
 
   // State for handling form inputs
   const [email, setEmail] = useState('');
@@ -35,6 +38,19 @@ const LoginForm = () => {
       signUpRef.current,
       { y: 20, opacity: 0 },
       { y: 0, opacity: 1, duration: 1, delay: 1.5, ease: 'bounce.out' }
+    );
+
+    // Animate the social icons
+    gsap.fromTo(
+      iconsRef.current.children,
+      { opacity: 0, y: 20 },
+      {
+        opacity: 1,
+        y: 0,
+        duration: 1,
+        stagger: 0.3,
+        ease: 'power3.out'
+      }
     );
   }, []);
 
@@ -71,13 +87,13 @@ const LoginForm = () => {
   return (
     <div
       ref={formRef}
-      className="border-gray-500 border-2 bg-transparent bg-opacity-20 backdrop-blur-sm p-8 rounded-lg shadow-lg w-96 mx-auto relative "
+      className="border-gray-500 border-2 bg-transparent bg-opacity-20 backdrop-blur-sm p-8 rounded-lg shadow-lg w-96 mx-auto relative"
       style={{
         boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.3)',
       }}
     >
-      <h2 className="text-2xl font-bold mb-4 text-white ">Buddy-Fi</h2>
-      <p className="text-lg mb-6 text-white">Hi Welcome Back, 👋</p>
+      <h2 className="text-2xl font-bold mb-4 text-white">Buddy-Fi</h2>
+      <p className="text-lg mb-6 text-white">Hi, Welcome Back 👋</p>
 
       {/* Display success or error message */}
       {error && <p className="text-red-500">{error}</p>}
@@ -129,6 +145,18 @@ const LoginForm = () => {
               Sign Up
             </Link>
           </p>
+        </div>
+
+        <div className="mt-4 text-center">
+          <p className="text-sm mb-4">Or</p>
+          <div
+            ref={iconsRef}
+            className="flex justify-center space-x-4"
+          >
+            <FontAwesomeIcon icon={faGoogle} size="2x" className="text-red-600 cursor-pointer" />
+            <FontAwesomeIcon icon={faFacebook} size="2x" className="text-blue-600 cursor-pointer" />
+            <FontAwesomeIcon icon={faInstagram} size="2x" className="text-pink-600 cursor-pointer" />
+          </div>
         </div>
       </form>
     </div>

@@ -113,7 +113,7 @@ const SignUpForm = () => {
               type="email"
               name="email"
               placeholder="Enter Your Email Address"
-              className="w-full border-2 border-gray-400 bg-white bg-opacity-30 text-white placeholder-gray-700 p-3 rounded-lg focus:border-yellow-400"
+              className="w-full border-2 border-gray-400 bg-white bg-opacity-30 text-black placeholder-gray-700 p-3 rounded-lg focus:border-yellow-400"
               value={formData.email}
               onChange={handleChange}
               required
@@ -125,7 +125,7 @@ const SignUpForm = () => {
               type="number"
               name="age"
               placeholder="Age"
-              className="w-1/3 border-2 border-gray-400 bg-white bg-opacity-30 text-white placeholder-gray-700 p-3 rounded-lg focus:border-yellow-400"
+              className="w-1/3 border-2 border-gray-400 bg-white bg-opacity-30 text-black placeholder-gray-700 p-3 rounded-lg focus:border-yellow-400"
               value={formData.age}
               onChange={handleChange}
               required
@@ -158,7 +158,7 @@ const SignUpForm = () => {
               type={showPassword ? 'text' : 'password'}
               name="password"
               placeholder="Password"
-              className="w-full border-2 border-gray-400 bg-white bg-opacity-30 text-white placeholder-gray-700 p-1 rounded-lg focus:border-yellow-400"
+              className="w-full border-2 border-gray-400 bg-white bg-opacity-30 text-black placeholder-gray-700 p-1 rounded-lg focus:border-yellow-400"
               value={formData.password}
               onChange={handleChange}
               required
@@ -176,7 +176,7 @@ const SignUpForm = () => {
               type={showConfirmPassword ? 'text' : 'password'}
               name="confirmPassword"
               placeholder="Confirm Password"
-              className="w-full border-2 border-gray-400 bg-white bg-opacity-30 text-white placeholder-gray-700 p-1 rounded-lg focus:border-yellow-400"
+              className="w-full border-2 border-gray-400 bg-white bg-opacity-30 text-black placeholder-gray-700 p-1 rounded-lg focus:border-yellow-400"
               value={formData.confirmPassword}
               onChange={handleChange}
               required
@@ -210,13 +210,16 @@ const SignUpForm = () => {
         <div className="text-center text-white text-sm mt-4">
           <p>Or Register with</p>
           <div className="flex justify-center space-x-4 mt-2">
-            <button className="text-white">
+             <button className="text-red-500"> 
+              {/* added a hover feature here :-gd */}
               <FaGoogle size={24} />
-            </button>
-            <button className="text-white">
+            </button>  
+          
+           
+            <button className="text-blue-500">
               <FaFacebookF size={24} />
             </button>
-            <button className="text-white">
+            <button className="text-pink-500">
               <FaInstagram size={24} />
             </button>
           </div>

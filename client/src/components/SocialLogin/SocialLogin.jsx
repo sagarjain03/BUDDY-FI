@@ -27,9 +27,9 @@ const SocialLogin = () => {
         ref={iconsRef}
         className="flex justify-center space-x-4"
       >
-        <FontAwesomeIcon icon={faGoogle} size="2x" className="text-red-500 cursor-pointer" />
+        <FontAwesomeIcon icon={faGoogle} size="2x" className="text-red-600 cursor-pointer" />
         <FontAwesomeIcon icon={faFacebook} size="2x" className="text-blue-600 cursor-pointer" />
-        <FontAwesomeIcon icon={faInstagram} size="2x" className="text-pink-500 cursor-pointer" />
+        <FontAwesomeIcon icon={faInstagram} size="2x" className="text-pink-600 cursor-pointer" />
       </div>
     </div>
   );
