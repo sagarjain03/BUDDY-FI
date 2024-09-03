@@ -1,7 +1,10 @@
 // import QuestionPage from "./components/Questionpage/QuestionPage";
+import Chat from "./pages/Chat";
 import Home from "./pages/Home";
+import Location from "./pages/Location";
 import Login from "./pages/Login";
 import QuestionForm from "./pages/QuestionForm";
+import ShowUsers from "./pages/ShowUsers";
 import SignUp from "./pages/SignUp";
 import Welcome from "./pages/Welcome"
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
@@ -33,9 +36,14 @@ const router = createBrowserRouter([
 const App = () => {
   return (
     <div>
-      <RouterProvider router={router} />
+      {/* <RouterProvider router={router} /> */}
     {/* <Welcome/> */}
       {/* <QuestionForm/> */}
+      {/* <Location/> */}
+      {/* <Chat/> */}
+      <ShowUsers/>
+
+
    
     </div>
   );
