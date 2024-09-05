@@ -28,8 +28,18 @@ const userSchema = new mongoose.Schema({
   },
   hobbies: {
     type: Map,
-    of: String, // Each hobby is stored as a string
+    of: String, 
     required: false,
+  },
+  location: {
+    longitude: {
+      type: Number,
+      required: false,
+    },
+    latitude: {
+      type: Number,
+      required: false,
+    },
   },
 });
 
