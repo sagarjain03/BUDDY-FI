@@ -105,7 +105,7 @@ const LoginForm = () => {
           <input
             type="email"
             placeholder="Enter Your Email Address..."
-            className="w-full border border-gray-300 p-2 rounded-md"
+            className="w-full placeholder-gray-600 border border-gray-300 p-2 rounded-md"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -116,7 +116,7 @@ const LoginForm = () => {
           <input
             type="password"
             placeholder="Password"
-            className="w-full border border-gray-300 p-2 rounded-md"
+            className="w-full placeholder-gray-600 border border-gray-300 p-2 rounded-md"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
