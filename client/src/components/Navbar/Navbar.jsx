@@ -39,7 +39,7 @@ import React from 'react';
 const Navbar = () => {
   return (
     <div 
-      className=" backdrop-blur-xl opacity-100 rounded-b-3xl  p-4 w-[80vw] h-[10%] border-2 border-white mx-auto rounded-b-2xl flex justify-around items-center "
+      className=" backdrop-blur-xl opacity-100 rounded-b-3xl  p-4 w-[80vw] h-[10%] border-2 border-white mx-auto rounded-b-2xl flex justify-around items-center mb-10 "
       style={{ height: '10vh' }}  // Set the height to cover 15% of the screen
     >
       {/* Left side: Logo */}

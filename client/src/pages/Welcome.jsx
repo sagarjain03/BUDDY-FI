@@ -43,7 +43,7 @@ const Welcome = () => {
       <Navbar />
 
       {/* Centered text section */}
-      <div className="flex items-center flex-col justify-space-between h-[350px] bg-transparent row-gap-75px">
+      <div className="flex items-center flex-col justify-between h-[100px] bg-transparent row-gap-75px">
         <p className="text-white text-center text-[20px] font-extrabold md:text-3xl leading-tight max-w-[1208px] relative transform transition-transform duration-200 ease-in-out hover:scale-110 text-stroke-1 text-stroke-black">
           Welcome to{" "}
           <span className="text-transparent font-extrabold bg-clip-text bg-gradient-to-r from-[#BAB9B8] to-[#FF0000] text-stroke-1 text-stroke-black">
@@ -77,18 +77,18 @@ const Welcome = () => {
           </ScrollControls>
         </Canvas>
       </div>
-      <div className="flex justify-center w:[200px] h-[800px]items-center  bg-transparent relative top-[-37vh] transform transition-transform duration-200 ease-in-out hover:scale-110">
+      <div className="flex justify-center w:[200px] h-[800px]items-center  bg-transparent relative top-[-37vh] transform transition-transform duration-200 ease-in-out ">
         <button
           type=""
-          className="w-[200px] border border-white border-2 hover:border-red-500 opacity-75 backdrop-blur-md bg-black text-white p-2 rounded-md font-bold hover:bg-gray-800   "
+          className="w-[200px] border border-white border-2 hover:border-red-500 opacity-75 backdrop-blur-md bg-black text-white p-2 rounded-md font-bold hover:bg-gray-800  "
         >
           Find my Buddy
         </button>
-        <img
+        {/* <img
           src="src/assets/navbar/fmb icon.svg"
           alt="find my buddy icon"
           className=""
-        />
+        /> */}
       </div>
     </div>
   );
