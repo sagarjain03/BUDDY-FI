@@ -1,12 +1,8 @@
-import React from 'react';
-
-const About = ({ description }) => {
-  return (
-    <div className="p-5 bg-gray-800 text-white mt-5">
-      <h3 className="text-xl font-bold mb-4">About</h3>
-      <p>{description}</p>
-    </div>
-  );
-};
+const About = ({ description }) => (
+  <div>
+    <h2 className="text-lg font-bold">About</h2>
+    <p className="mt-2 text-sm leading-relaxed text-ink-600">{description}</p>
+  </div>
+);
 
 export default About;

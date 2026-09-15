@@ -1,18 +1,31 @@
-import React from 'react';
+const Personality = ({ traits = [] }) => {
+  if (traits.length === 0) {
+    return (
+      <p className="text-sm text-ink-400">
+        Finish the quiz and your answers will show up here.
+      </p>
+    );
+  }
 
-const Personality = ({ traits }) => {
   return (
-    <div className="p-5">
-      <h3 className="text-xl font-semibold mb-4">Personality</h3>
-      <ul className="space-y-2">
-        {traits.map((trait, index) => (
-          <li key={index} className="flex items-center">
-            <span className="text-lg mr-2">{trait.icon}</span>
-            <span>{trait.name}</span>
-          </li>
-        ))}
-      </ul>
-    </div>
+    <dl className="grid gap-3 sm:grid-cols-2">
+      {traits.map((trait) => (
+        <div
+          key={trait.name}
+          className="flex items-center gap-3 rounded-xl border border-ink-100 bg-ink-50 px-4 py-3"
+        >
+          <span className="text-lg" aria-hidden="true">
+            {trait.icon}
+          </span>
+          <div className="min-w-0">
+            <dt className="text-xs uppercase tracking-wider text-ink-400">{trait.name}</dt>
+            <dd className="truncate text-sm font-semibold text-ink-800">
+              {trait.value || 'Not answered'}
+            </dd>
+          </div>
+        </div>
+      ))}
+    </dl>
   );
 };
 

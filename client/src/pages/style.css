@@ -1,18 +1,6 @@
-html,body{
-  width: 100%;
- overflow: hidden;
- 
-
-}
-Canvas{
+/* Styles specific to the 3D canvas on the Welcome page. */
+.welcome-canvas canvas {
   width: 100%;
   height: 100%;
-  /* background-color: black; */
-  /* background-image: url("../assets/bg.png"); */
-  /* background-color: transparent; */
-  /* background-repeat: no-repeat; */
-  background-position: center -30vh;
-  position: relative;
-  top: -30vh;
-  
+  display: block;
 }

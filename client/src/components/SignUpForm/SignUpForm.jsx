@@ -1,236 +1,212 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FaGoogle, FaFacebookF, FaInstagram } from 'react-icons/fa';
 import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
-import gsap from 'gsap';
-import axios from 'axios';
+import Input from '../ui/Input';
+import Button from '../ui/Button';
+import Alert from '../ui/Alert';
+import { apiFetch, setToken } from '../../lib/api';
+import { GENDERS } from '../../lib/labels';
+
+const EMPTY = {
+  name: '',
+  email: '',
+  age: '',
+  password: '',
+  confirmPassword: '',
+  gender: '',
+};
 
 const SignUpForm = () => {
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    age: '',
-    password: '',
-    confirmPassword: '',
-    gender: '', // Added gender to the form data
-  });
-  const [error, setError] = useState(null);
-  const [responseError, setResponseError] = useState(null); // Store error response from API
   const navigate = useNavigate();
-
-  const formRef = useRef(null);
-  const buttonRef = useRef(null);
-  const inputRefs = useRef([]);
-
-  useEffect(() => {
-    gsap.fromTo(
-      formRef.current,
-      { opacity: 0, scale: 0.8 },
-      { opacity: 1, scale: 1, duration: 1, ease: 'bounce.out' }
-    );
-    gsap.fromTo(
-      inputRefs.current,
-      { x: -200, opacity: 0 },
-      { x: 0, opacity: 1, stagger: 0.2, duration: 0.8, ease: 'power3.out' }
-    );
-    gsap.to(buttonRef.current, {
-      scale: 1.05,
-      repeat: -1,
-      yoyo: true,
-      ease: 'power1.inOut',
-      duration: 0.4,
-    });
-  }, []);
+  const [formData, setFormData] = useState(EMPTY);
+  const [fieldErrors, setFieldErrors] = useState({});
+  const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFieldErrors((prev) => ({ ...prev, [name]: undefined }));
+  };
+
+  const validate = () => {
+    const errors = {};
+    if (!formData.name.trim()) errors.name = 'Tell us your name';
+    if (!/^\S+@\S+\.\S+$/.test(formData.email)) errors.email = 'Enter a valid email';
+    if (!formData.age || Number(formData.age) < 13 || Number(formData.age) > 120) {
+      errors.age = 'Age must be between 13 and 120';
+    }
+    if (formData.password.length < 8) errors.password = 'At least 8 characters';
+    if (formData.password !== formData.confirmPassword) {
+      errors.confirmPassword = 'Passwords do not match';
+    }
+    if (!formData.gender) errors.gender = 'Pick one';
+    return errors;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
-    if (formData.password !== formData.confirmPassword) {
-      setError("Passwords don't match");
-      return;
-    }
-  
+    setError('');
+
+    const errors = validate();
+    setFieldErrors(errors);
+    if (Object.keys(errors).length > 0) return;
+
+    setSubmitting(true);
     try {
-      const response = await axios.post('http://localhost:5000/api/auth/register', {
-        name: formData.name,
-        email: formData.email,
-        age: formData.age,
-        password: formData.password,
-        confirmPassword: formData.confirmPassword, 
-        gender: formData.gender,
+      const data = await apiFetch('/api/auth/register', {
+        method: 'POST',
+        auth: false,
+        body: {
+          name: formData.name.trim(),
+          email: formData.email.trim(),
+          age: Number(formData.age),
+          password: formData.password,
+          confirmPassword: formData.confirmPassword,
+          gender: formData.gender,
+        },
       });
-  
-      console.log(response.data);
-  
-      // Store the email in local storage
-      localStorage.setItem('registeredEmail', formData.email);
-  
-      // Navigate to the next page after successful registration
-      navigate('/submit-answer');
+
+      // Registration signs the user in, so the quiz step is already authenticated.
+      setToken(data.token);
+      navigate('/submit-answer', { replace: true });
     } catch (err) {
-      console.error('Error response:', err.response?.data || err.message);
-      setResponseError(err.response?.data?.message || 'Registration failed');
+      setError(err.message || 'Registration failed');
+      setSubmitting(false);
     }
   };
-  
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-transparent relative">
-      <div
-        ref={formRef}
-        className="border-gray-500 border-2 bg-transparent bg-opacity-20 backdrop-blur-sm p-8 rounded-lg shadow-lg w-96 mx-auto relative "
-      >
-        <h2 className="text-2xl font-semibold text-black mb-2 font-baloo">Buddy-Fi</h2>
-        <p className="font-semibold mb-4 text-md">
-          <span>MUCHO GUSTO - 😃 Create Your Account</span>
-        </p>
+    <div className="animate-fade-up">
+      <h1 className="text-3xl font-extrabold">Create your account</h1>
+      <p className="mt-2 text-sm text-ink-500">
+        Takes a minute. Then seven quick questions and you are in.
+      </p>
 
-        {error && <p className="text-red-500 mb-4">{error}</p>} {/* Display validation error */}
-        {responseError && <p className="text-red-500 mb-4">{responseError}</p>} {/* Display API error */}
+      <form className="mt-8 space-y-4" onSubmit={handleSubmit} noValidate>
+        <Alert tone="error">{error}</Alert>
 
-        <form className="space-y-4" onSubmit={handleSubmit}>
+        <Input
+          label="Full name"
+          name="name"
+          autoComplete="name"
+          placeholder="Aarav Mehta"
+          value={formData.name}
+          onChange={handleChange}
+          error={fieldErrors.name}
+        />
+
+        <Input
+          label="Email"
+          name="email"
+          type="email"
+          autoComplete="email"
+          placeholder="you@example.com"
+          value={formData.email}
+          onChange={handleChange}
+          error={fieldErrors.email}
+        />
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Input
+            label="Age"
+            name="age"
+            type="number"
+            min="13"
+            max="120"
+            placeholder="21"
+            value={formData.age}
+            onChange={handleChange}
+            error={fieldErrors.age}
+          />
+
           <div>
-            <input
-              ref={(el) => (inputRefs.current[0] = el)}
-              type="text"
-              name="name"
-              placeholder="Enter Your Name"
-              className="w-full border-2 border-gray-400 bg-white bg-opacity-30 text-black placeholder-gray-700 p-3 rounded-lg focus:border-yellow-400"
-              value={formData.name}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div>
-            <input
-              ref={(el) => (inputRefs.current[1] = el)}
-              type="email"
-              name="email"
-              placeholder="Enter Your Email Address"
-              className="w-full border-2 border-gray-400 bg-white bg-opacity-30 text-black placeholder-gray-700 p-3 rounded-lg focus:border-yellow-400"
-              value={formData.email}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div className="flex space-x-2">
-            <input
-              ref={(el) => (inputRefs.current[2] = el)}
-              type="number"
-              name="age"
-              placeholder="Age"
-              className="w-1/3 border-2 border-gray-400 bg-white bg-opacity-30 text-black placeholder-gray-700 p-3 rounded-lg focus:border-yellow-400"
-              value={formData.age}
-              onChange={handleChange}
-              required
-            />
-            <div className="flex items-center space-x-3">
-              <span className="text-gray-600 text-sm font-semibold">GENDER</span>
-              <label className="text-gray-700">
-                <input
-                  type="radio"
-                  name="gender"
-                  value="male"
-                  className="mr-1"
-                  onChange={handleChange}
-                /> MALE
-              </label>
-              <label className="text-gray-700">
-                <input
-                  type="radio"
-                  name="gender"
-                  value="female"
-                  className="mr-1"
-                  onChange={handleChange}
-                /> FEMALE
-              </label>
-            </div>
-          </div>
-          <div className="relative">
-            <input
-              ref={(el) => (inputRefs.current[3] = el)}
-              type={showPassword ? 'text' : 'password'}
-              name="password"
-              placeholder="Password"
-              className="w-full border-2 border-gray-400 bg-white bg-opacity-30 text-black placeholder-gray-700 p-1 rounded-lg focus:border-yellow-400"
-              value={formData.password}
-              onChange={handleChange}
-              required
-            />
-            <div
-              className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer text-white"
-              onClick={() => setShowPassword(!showPassword)}
-            >
-              {showPassword ? <AiFillEye /> : <AiFillEyeInvisible />}
-            </div>
-          </div>
-          <div className="relative">
-            <input
-              ref={(el) => (inputRefs.current[4] = el)}
-              type={showConfirmPassword ? 'text' : 'password'}
-              name="confirmPassword"
-              placeholder="Confirm Password"
-              className="w-full border-2 border-gray-400 bg-white bg-opacity-30 text-black placeholder-gray-700 p-1 rounded-lg focus:border-yellow-400"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              required
-            />
-            <div
-              className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer text-white"
-              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-            >
-              {showConfirmPassword ? <AiFillEye /> : <AiFillEyeInvisible />}
-            </div>
-          </div>
-          <div className="flex justify-between items-center text-sm text-white">
-            <label className="flex items-center text-blue-400">
-              <input type="checkbox" className="mr-2" required />
-              Terms And Conditions
+            <label htmlFor="signup-gender" className="field-label">
+              Gender
             </label>
-            <label className="flex items-center text-blue-400">
-              <input type="checkbox" className="mr-2" required />
-              Privacy Policy
-            </label>
+            <select
+              id="signup-gender"
+              name="gender"
+              value={formData.gender}
+              onChange={handleChange}
+              className={`field-input ${fieldErrors.gender ? 'field-error' : ''}`}
+            >
+              <option value="">Choose one</option>
+              {GENDERS.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+            {fieldErrors.gender && (
+              <p className="mt-1.5 text-xs font-medium text-red-600">{fieldErrors.gender}</p>
+            )}
           </div>
-          <button
-            ref={buttonRef}
-            type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-lg font-bold"
-          >
-            Sign-Up
-          </button>
-        </form>
-
-        <div className="text-center text-white text-sm mt-4">
-          <p>Or Register with</p>
-          <div className="flex justify-center space-x-4 mt-2">
-             <button className="text-red-500"> 
-              {/* added a hover feature here :-gd */}
-              <FaGoogle size={24} />
-            </button>  
-          
-           
-            <button className="text-blue-500">
-              <FaFacebookF size={24} />
-            </button>
-            <button className="text-pink-500">
-              <FaInstagram size={24} />
-            </button>
-          </div>
-          <p className="mt-4">
-            Already Have An Account?{' '}
-            <Link to="/login" className="text-blue-400 hover:underline">
-              Login
-            </Link>
-          </p>
         </div>
-      </div>
+
+        <div className="relative">
+          <Input
+            label="Password"
+            name="password"
+            type={showPassword ? 'text' : 'password'}
+            autoComplete="new-password"
+            placeholder="At least 8 characters"
+            value={formData.password}
+            onChange={handleChange}
+            error={fieldErrors.password}
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword((value) => !value)}
+            aria-label={showPassword ? 'Hide password' : 'Show password'}
+            className="absolute right-3 top-[34px] text-ink-400 hover:text-ink-700"
+          >
+            {showPassword ? <AiFillEye /> : <AiFillEyeInvisible />}
+          </button>
+        </div>
+
+        <Input
+          label="Confirm password"
+          name="confirmPassword"
+          type={showPassword ? 'text' : 'password'}
+          autoComplete="new-password"
+          placeholder="Type it again"
+          value={formData.confirmPassword}
+          onChange={handleChange}
+          error={fieldErrors.confirmPassword}
+        />
+
+        <label className="flex items-start gap-2.5 pt-1 text-sm text-ink-600">
+          <input
+            type="checkbox"
+            required
+            className="mt-0.5 h-4 w-4 rounded border-ink-300 text-brand-500 focus:ring-brand-500"
+          />
+          <span>
+            I agree to the{' '}
+            <Link to="/terms" className="font-medium text-brand-600 hover:text-brand-700">
+              Terms of Service
+            </Link>{' '}
+            and{' '}
+            <Link to="/privacy" className="font-medium text-brand-600 hover:text-brand-700">
+              Privacy Policy
+            </Link>
+            .
+          </span>
+        </label>
+
+        <Button type="submit" size="lg" fullWidth disabled={submitting} className="!mt-6">
+          {submitting ? 'Creating account\u2026' : 'Create account'}
+        </Button>
+      </form>
+
+      <p className="mt-8 text-center text-sm text-ink-500">
+        Already have an account?{' '}
+        <Link to="/login" className="font-semibold text-brand-600 hover:text-brand-700">
+          Log in
+        </Link>
+      </p>
     </div>
   );
 };

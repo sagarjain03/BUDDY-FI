@@ -1,24 +1,15 @@
-import SignUpForm from '../components/SignUpForm/signUpForm';
-import registerpng from '../assets/register.png'; // Import the image
+import AuthLayout from '../components/layout/AuthLayout';
+import SignUpForm from '../components/SignUpForm/SignUpForm';
+import registerImage from '../assets/register.png';
 
-const SignUp = () => {
-  return (
-    <div 
-      className="flex snap-none"
-      style={{
-        backgroundImage: `url(${registerpng})`, // Correctly setting the background image
-        backgroundSize: 'cover', // Make the image cover the entire area
-        backgroundPosition: 'center', // Center the background image
-        minHeight: '100vh', // Ensure it takes up the full viewport height
-      }}
-    >
-      <div className="relative flex-1 flex justify-center items-center">
-        <div>
-          <SignUpForm />
-        </div>
-      </div>
-    </div>
-  );
-};
+const SignUp = () => (
+  <AuthLayout
+    image={registerImage}
+    quote="Your people are out there. They just answered the same seven questions."
+    quoteAuthor="Join BUDDYFI today."
+  >
+    <SignUpForm />
+  </AuthLayout>
+);
 
 export default SignUp;

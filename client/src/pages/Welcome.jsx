@@ -1,95 +1,117 @@
-// import React from 'react'
-// import MacContainer from '../components/MacContainer/MacContainer'
-// import { Canvas } from '@react-three/fiber';
+import { Suspense, useEffect, useState } from 'react';
+import { Canvas } from '@react-three/fiber';
+import { Link } from 'react-router-dom';
+import MacContainer from '../components/MacContainer/MacContainer';
+import Navbar from '../components/layout/Navbar';
+import Footer from '../components/layout/Footer';
+import Button from '../components/ui/Button';
+import { apiFetch } from '../lib/api';
+import './style.css';
 
-// import { Environment, ScrollControls } from '@react-three/drei';
-
-// import "./style.css";
-// import Navbar from '../components/Navbar/Navbar';
-// const Welcome = () => {
-//   return (<>
-//    {/* <Navbar/> */}
-//     <Canvas camera={{ fov: 20, position: [0, -2, 120] }} >
-//     {/* <OrbitControls />  */}
-
-//     <Environment files="https://dl.polyhaven.org/file/ph-assets/HDRIs/exr/4k/studio_small_09_4k.exr" /> {/* Corrected Environment */}
-
-//     <ScrollControls>
-//     <MacContainer/>
-//     </ScrollControls>
-//   </Canvas>
-
-//   <Navbar/>
-
-//   </>
-
-//   )
-// }
-
-// export default Welcome
-import React from "react";
-import MacContainer from "../components/MacContainer/MacContainer";
-import { Canvas } from "@react-three/fiber";
-import { Environment, ScrollControls } from "@react-three/drei";
-
-import "./style.css";
-import Navbar from "../components/Navbar/Navbar";
-import Button from "../components/Button/Button";
+const QUICK_ACTIONS = [
+  {
+    to: '/show-users',
+    icon: '🧭',
+    title: 'Discover people',
+    body: 'Browse members who answered the same seven questions.',
+  },
+  {
+    to: '/chat',
+    icon: '💬',
+    title: 'Open the chat',
+    body: 'Say hello in the shared room and see who replies.',
+  },
+  {
+    to: '/location',
+    icon: '📍',
+    title: 'Set your location',
+    body: 'Share where you are to meet people close enough to hang out.',
+  },
+  {
+    to: '/profile',
+    icon: '🪪',
+    title: 'Check your profile',
+    body: 'See exactly what other members see about you.',
+  },
+];
 
 const Welcome = () => {
+  const [name, setName] = useState('');
+
+  useEffect(() => {
+    apiFetch('/api/auth/me')
+      .then((data) => setName(data.data.user.name))
+      .catch(() => setName(''));
+  }, []);
+
+  const firstName = name.split(' ')[0];
+
   return (
-    <div className='bg-[url("/src/assets/bg.png")] bg-cover bg-center'>
-      {/* Navbar placed at the top of the page */}
+    <div className="flex min-h-screen flex-col bg-ink-50">
       <Navbar />
 
-      {/* Centered text section */}
-      <div className="flex items-center flex-col justify-between h-[100px] bg-transparent row-gap-75px">
-        <p className="text-white text-center text-[20px] font-extrabold md:text-3xl leading-tight max-w-[1208px] relative transform transition-transform duration-200 ease-in-out hover:scale-110 text-stroke-1 text-stroke-black">
-          Welcome to{" "}
-          <span className="text-transparent font-extrabold bg-clip-text bg-gradient-to-r from-[#BAB9B8] to-[#FF0000] text-stroke-1 text-stroke-black">
-            Buddyfi
-          </span>
-          , your gateway to finding the friends you didn’t know you were
-          missing!
-          <span className="absolute inset-0 " style={{}}></span>
-        </p>
+      <main className="flex-1">
+        {/* Hero ---------------------------------------------------------- */}
+        <section className="relative overflow-hidden bg-ink-950">
+          <div className="absolute -right-24 top-0 h-80 w-80 rounded-full bg-brand-500/25 blur-3xl" />
+          <div className="absolute -bottom-24 -left-16 h-80 w-80 rounded-full bg-accent-500/20 blur-3xl" />
 
-        <p className="bg-gradient-to-r from-neon-pink via-neon-blue to-electric-purple text-transparent bg-clip-text animate-glow text-center text-2xl font-extrabold md:text-3xl leading-tight max-w-[1208px] relative transform transition-transform duration-200 ease-in-out hover:scale-110 text-stroke-1 text-stroke-black">
-          Don't keep your next BFF waiting!"
-        </p>
-        <p className="text-white text-center text-2xl font-extrabold md:text-3xl leading-tight max-w-[1208px] relative transform transition-transform duration-200 ease-in-out hover:scale-110 text-stroke-1 text-stroke-black">
-          The best friendships start right here.
-        </p>
+          <div className="container-page relative grid items-center gap-10 py-14 lg:grid-cols-2 lg:py-20">
+            <div className="animate-fade-up">
+              <p className="eyebrow text-brand-300">You are in</p>
+              <h1 className="mt-4 font-display text-4xl font-extrabold leading-tight text-white sm:text-5xl">
+                Welcome{firstName ? `, ${firstName}` : ''}.
+                <br />
+                Your people are waiting.
+              </h1>
+              <p className="mt-5 max-w-md text-lg leading-relaxed text-white/70">
+                Your answers are saved. Now go find the friends you did not know you were
+                missing — no dating drama, pinky promise.
+              </p>
 
-        <p className="text-white text-center text-2xl font-extrabold md:text-3xl leading-tight max-w-[1208px] relative transform transition-transform duration-200 ease-in-out hover:scale-110 text-stroke-1 text-stroke-black">
-          Scroll down to find your tribe! Pinky promise, no dating drama!
-        </p>
-      </div>
+              <div className="mt-9 flex flex-col gap-3 sm:flex-row">
+                <Button to="/show-users" size="lg">
+                  Find my buddy
+                </Button>
+                <Button to="/profile" size="lg" variant="onDark">
+                  View my profile
+                </Button>
+              </div>
+            </div>
 
-      {/* Canvas content */}
-      <div className="z-10">
-        <Canvas camera={{ fov: 20, position: [0, -2, 120] }}>
-          {/* <OrbitControls />  */}
-          <Environment files="https://dl.polyhaven.org/file/ph-assets/HDRIs/exr/4k/studio_small_09_4k.exr" />{" "}
-          {/* Corrected Environment */}
-          <ScrollControls>
-            <MacContainer />
-          </ScrollControls>
-        </Canvas>
-      </div>
-      <div className="flex justify-center w:[200px] h-[800px]items-center  bg-transparent relative top-[-37vh] transform transition-transform duration-200 ease-in-out ">
-        <button
-          type=""
-          className="w-[200px] border border-white border-2 hover:border-red-500 opacity-75 backdrop-blur-md bg-black text-white p-2 rounded-md font-bold hover:bg-gray-800  "
-        >
-          Find my Buddy
-        </button>
-        {/* <img
-          src="src/assets/navbar/fmb icon.svg"
-          alt="find my buddy icon"
-          className=""
-        /> */}
-      </div>
+            <div className="welcome-canvas h-[280px] w-full sm:h-[360px] lg:h-[420px]">
+              <Canvas camera={{ fov: 22, position: [0, -2, 120] }}>
+                <ambientLight intensity={1.1} />
+                <directionalLight position={[10, 20, 15]} intensity={2.2} />
+                <directionalLight position={[-12, -4, -10]} intensity={0.8} />
+                <Suspense fallback={null}>
+                  <MacContainer />
+                </Suspense>
+              </Canvas>
+            </div>
+          </div>
+        </section>
+
+        {/* Quick actions -------------------------------------------------- */}
+        <section className="container-page py-12 sm:py-16">
+          <h2 className="text-2xl font-extrabold">Where to next</h2>
+          <p className="mt-1.5 text-sm text-ink-500">Four places worth starting from.</p>
+
+          <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {QUICK_ACTIONS.map((action) => (
+              <Link key={action.to} to={action.to} className="card-interactive block p-6">
+                <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-ink-100 text-xl">
+                  {action.icon}
+                </span>
+                <h3 className="mt-4 text-base font-bold">{action.title}</h3>
+                <p className="mt-1.5 text-sm leading-relaxed text-ink-500">{action.body}</p>
+              </Link>
+            ))}
+          </div>
+        </section>
+      </main>
+
+      <Footer />
     </div>
   );
 };

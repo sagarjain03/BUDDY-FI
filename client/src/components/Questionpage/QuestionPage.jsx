@@ -1,258 +1,223 @@
-import React, { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import avengers from '../../assets/movies/avengers.png';
-import friends from '../../assets/movies/friends.png';
-import znmd from '../../assets/movies/znmd.png';
-import titanic from '../../assets/movies/titanic.png';
-import jazz from '../../assets/music/jazz.png';
-import pop from '../../assets/music/pop.png';
-import rap from '../../assets/music/rap.png';
-import rock from '../../assets/music/rock.png';
-import exercise from '../../assets/toughday/exercise.png';
-import meditation from '../../assets/toughday/meditation.png';
-import powering from '../../assets/toughday/powering.png';
-import venting from '../../assets/toughday/venting.png';
-import beach from '../../assets/vacation/beach.png';
-import city from '../../assets/vacation/city.png';
-import culture from '../../assets/vacation/culture.png';
-import mountain from '../../assets/vacation/mountain.png';
-import bingwatch from '../../assets/weekends/bingwatch.png';
-import explore from '../../assets/weekends/explore.png';
-import hangout from '../../assets/weekends/hangout.png';
-import reading from '../../assets/weekends/reading.png';
-import face from '../../assets/communicate/face.png'
-import voice from '../../assets/communicate/voice.png'
-import text from '../../assets/communicate/text.png'
-import video from '../../assets/communicate/video.png'
-import sgcf from '../../assets/social/sgcf.png'
-import bp from '../../assets/social/bp.png'
-import one from '../../assets/social/one.png'
-import diff from '../../assets/social/diff.png'
-
-// Map images to options for easier management
-const optionImages = {
-  'Romantic Movies': titanic,
-  'Adventure/Travel Movies': znmd,
-  'Comedies': friends,
-  'Action/Thriller Movies': avengers,
-  'Hanging out with friends': hangout,
-  'Exploring new places': explore,
-  'Binge-watching TV shows': bingwatch,
-  'Reading a good book': reading,
-  'Pop Hits': pop,
-  'Classical Music': jazz,
-  'Rock/Alternative': rock,
-  'Hip-Hop/Rap': rap,
-  'In-person hangouts': face,
-  'Video Calls': video,
-  'Texting/Messaging': text,
-  'Voice Notes': voice,
-  'Beach Relaxation': beach,
-  'Mountain Trekking': mountain,
-  'City Exploration': city,
-  'Cultural Tour': culture,
-  'Venting to a friend': venting,
-  'Working out or going for a run': exercise,
-  'Meditating or practicing mindfulness': meditation,
-  'Powering through with determination': powering,
-  'Small gathering with close friends':sgcf,
-  'Big parties or events':bp,
-  'Quiet one-on-one conversations':one,
-  'Hanging out with different groups':diff
-};
-
-// List of questions and options
-const questions = [
-  {
-    question: "What type of movie do you love watching on repeat?",
-    options: [
-      'Romantic Movies',
-      'Adventure/Travel Movies',
-      'Comedies',
-      'Action/Thriller Movies'
-    ]
-  },
-  {
-    question: "How do you spend your ideal weekend?",
-    options: [
-      'Hanging out with friends',
-      'Exploring new places',
-      'Binge-watching TV shows',
-      'Reading a good book'
-    ]
-  },
-  {
-    question: "What type of music do you vibe to?",
-    options: [
-      'Pop Hits',
-      'Jazz',
-      'Rock/Alternative',
-      'Hip-Hop/Rap'
-    ]
-  },
-  {
-    question: "How do you prefer to communicate with friends?",
-    options: [
-      'In-person hangouts',
-      'Video Calls',
-      'Texting/Messaging',
-      'Voice Notes'
-    ]
-  },
-  {
-    question: "What kind of vacation do you dream of?",
-    options: [
-      'Beach Relaxation',
-      'Mountain Trekking',
-      'City Exploration',
-      'Cultural Tour'
-    ]
-  },
-  {
-    question: "How do you usually handle a tough day?",
-    options: [
-      'Venting to a friend',
-      'Working out or going for a run',
-      'Meditating or practicing mindfulness',
-      'Powering through with determination'
-    ]
-  },
-  {
-    question: "What kind of social setting do you prefer ?",
-    options: [
-      'Small gathering with close friends',
-      'Big parties or events',
-      'Quiet one-on-one conversations',
-      'Hanging out with different groups'
-    ]
-  }
-];
+import Button from '../ui/Button';
+import Alert from '../ui/Alert';
+import { apiFetch } from '../../lib/api';
+import { optionImage } from '../../lib/quizImages';
 
 const QuestionPage = () => {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [selectedOptions, setSelectedOptions] = useState({});
   const navigate = useNavigate();
 
-  const handleOptionSelect = (option) => {
-    setSelectedOptions({
-      ...selectedOptions,
-      [currentIndex]: option
-    });
-  };
+  const [questions, setQuestions] = useState(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [selected, setSelected] = useState({});
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState('');
 
-  const handlePrevious = () => {
-    if (currentIndex > 0) {
-      setCurrentIndex(currentIndex - 1);
-    }
-  };
+  useEffect(() => {
+    let cancelled = false;
 
-  const handleNext = () => {
-    if (currentIndex < questions.length - 1) {
-      setCurrentIndex(currentIndex + 1);
-    }
-  };
-  const handleSubmit = async () => {
-    try {
-      // Retrieve the email from local storage
-      const email = localStorage.getItem('registeredEmail');
-  
-      if (!email) {
-        alert('Email not found. Please register again.');
-        return;
-      }
-  
-      const requestBody = {
-        email,
-        hobbies: {
-          hobby1: selectedOptions[0], // Modify these indices based on the actual hobby questions
-          hobby2: selectedOptions[1], // Example for two hobby questions
-          hobby3: selectedOptions[2], // Example for two hobby questions
-          hobby4: selectedOptions[3], // Example for two hobby questions
-          hobby5: selectedOptions[4], // Example for two hobby questions
-          hobby6: selectedOptions[5], // Example for two hobby questions
-          hobby7: selectedOptions[6], // Example for two hobby questions
-        },
-      };
-  
-      const response = await fetch('http://localhost:5000/api/auth/submit-answers', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(requestBody),
+    Promise.all([apiFetch('/api/questions'), apiFetch('/api/auth/answers').catch(() => null)])
+      .then(([list, mine]) => {
+        if (cancelled) return;
+        setQuestions(list.data.questions);
+
+        // Pre-fill what they already answered, so retaking the quiz or
+        // answering newly added questions does not start from scratch.
+        if (mine?.data?.answers) {
+          setSelected(
+            Object.fromEntries(
+              mine.data.answers.map((answer) => [String(answer.questionId), answer.value])
+            )
+          );
+        }
+      })
+      .catch((err) => {
+        if (!cancelled) setError(err.message || 'Could not load the quiz');
       });
-  
-      const responseData = await response.json();
-  
-      if (response.ok) {
-        console.log('Response from server:', responseData);
-        alert('Answers submitted successfully!');
-        navigate('/login');
-      } else {
-        console.error('Server error:', responseData);
-        alert('Failed to submit answers.');
-      }
-    } catch (error) {
-      console.error('Error submitting answers:', error);
-      alert('Error submitting answers.');
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  if (error && !questions) {
+    return (
+      <div className="card p-7">
+        <Alert tone="error">{error}</Alert>
+      </div>
+    );
+  }
+
+  if (!questions) {
+    return (
+      <div className="card space-y-4 p-7">
+        <div className="skeleton h-3 w-full rounded-full" />
+        <div className="skeleton h-6 w-2/3 rounded" />
+        <div className="grid grid-cols-2 gap-4">
+          {[0, 1, 2, 3].map((key) => (
+            <div key={key} className="skeleton aspect-[4/3] w-full rounded-2xl" />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  const question = questions[currentIndex];
+  const isLast = currentIndex === questions.length - 1;
+  const answered = questions.filter((entry) => selected[String(entry._id)]).length;
+  const progress = Math.round((answered / questions.length) * 100);
+  const chosen = selected[String(question._id)];
+
+  const choose = (value) =>
+    setSelected((current) => ({ ...current, [String(question._id)]: value }));
+
+  const submit = async () => {
+    const missing = questions.findIndex((entry) => !selected[String(entry._id)]);
+    if (missing !== -1) {
+      setCurrentIndex(missing);
+      setError('Please answer every question before submitting.');
+      return;
+    }
+
+    setError('');
+    setSubmitting(true);
+    try {
+      await apiFetch('/api/auth/answers', {
+        method: 'POST',
+        body: {
+          answers: questions.map((entry) => ({
+            questionId: entry._id,
+            value: selected[String(entry._id)],
+          })),
+        },
+      });
+      navigate('/welcome', { replace: true });
+    } catch (err) {
+      setError(err.message || 'Failed to submit answers.');
+      setSubmitting(false);
     }
   };
-  
-
-  const { question, options } = questions[currentIndex];
 
   return (
-    <div className="flex flex-col items-center justify-center bg-transparent border-2 border-black rounded-lg w-4/12 p-4 overflow-hidden">
-      <div className="text-center mb-6">
-        <h1 className="text-3xl font-bold">{question}</h1>
-        <p className="text-md text-gray-500 mt-2">
-          (Choose The Option That Fits You Best And Let's Get To Know You Better! 😁)
-        </p>
-      </div>
-
-      <div className="grid grid-cols-2 gap-3">
-        {options.map((option, index) => (
-          <div
-            key={index}
-            className={`relative group flex flex-col items-center cursor-pointer ${
-              selectedOptions[currentIndex] === option ? 'border-4 border-blue-500' : ''
-            }`}
-            onClick={() => handleOptionSelect(option)}
-          >
-            <img
-              src={optionImages[option]}
-              alt={option}
-              className="rounded-lg shadow-lg w-36 h-48 object-cover mb-2"
-            />
-            <p className="text-center">{option}</p>
-          </div>
-        ))}
-      </div>
-
-      <div className="flex items-center justify-between mt-6">
-        <button
-          onClick={handlePrevious}
-          disabled={currentIndex === 0}
-          className="bg-white p-3 rounded-full shadow-md mx-2 text-2xl"
+    <div className="card w-full overflow-hidden">
+      {/* Progress -------------------------------------------------------- */}
+      <div className="border-b border-ink-100 px-6 py-5 sm:px-8">
+        <div className="flex items-center justify-between text-sm">
+          <span className="font-semibold text-ink-900">
+            Question {currentIndex + 1}
+            <span className="font-normal text-ink-400"> of {questions.length}</span>
+          </span>
+          <span className="font-medium text-ink-500">{progress}% complete</span>
+        </div>
+        <div
+          className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-ink-100"
+          role="progressbar"
+          aria-valuenow={progress}
+          aria-valuemin={0}
+          aria-valuemax={100}
         >
-          ⬅
-        </button>
-        {currentIndex < questions.length - 1 ? (
-          <button
-            onClick={handleNext}
-            disabled={!selectedOptions[currentIndex]}
-            className="bg-white p-3 rounded-full shadow-md mx-2 text-2xl"
-          >
-            ➡
-          </button>
+          <div
+            className="h-full rounded-full bg-brand-500 transition-all duration-500"
+            style={{ width: `${progress}%` }}
+          />
+        </div>
+      </div>
+
+      {/* Question -------------------------------------------------------- */}
+      <div className="px-6 py-8 sm:px-8">
+        <h2 className="text-xl font-extrabold sm:text-2xl">{question.prompt}</h2>
+        <p className="mt-2 text-sm text-ink-500">
+          {question.helpText || 'Pick the one that fits you best — there is no wrong answer.'}
+        </p>
+
+        {error && (
+          <Alert tone="error" className="mt-5">
+            {error}
+          </Alert>
+        )}
+
+        <div className="mt-6 grid grid-cols-2 gap-3 sm:gap-4">
+          {question.options.map((option) => {
+            const isChosen = chosen === option.value;
+            const image = option.imageUrl || optionImage(option.label);
+
+            return (
+              <button
+                key={option.value}
+                type="button"
+                onClick={() => choose(option.value)}
+                aria-pressed={isChosen}
+                className={`group overflow-hidden rounded-2xl border-2 text-left transition-all duration-200 ${
+                  isChosen
+                    ? 'border-brand-500 shadow-glow'
+                    : 'border-ink-100 hover:-translate-y-0.5 hover:border-ink-300 hover:shadow-soft'
+                }`}
+              >
+                <div className="relative aspect-[4/3] w-full overflow-hidden bg-ink-100">
+                  {image && (
+                    <img
+                      src={image}
+                      alt=""
+                      className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                      loading="lazy"
+                    />
+                  )}
+                  {isChosen && (
+                    <span className="absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded-full bg-brand-500 text-xs font-bold text-white">
+                      &#10003;
+                    </span>
+                  )}
+                </div>
+                <span
+                  className={`flex min-h-[3.25rem] items-center px-3 py-2.5 text-sm font-semibold ${
+                    isChosen ? 'text-brand-700' : 'text-ink-700'
+                  }`}
+                >
+                  {option.label}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Controls -------------------------------------------------------- */}
+      <div className="flex items-center justify-between gap-3 border-t border-ink-100 bg-ink-50 px-6 py-4 sm:px-8">
+        <Button
+          variant="outline"
+          onClick={() => setCurrentIndex((index) => Math.max(0, index - 1))}
+          disabled={currentIndex === 0}
+        >
+          Back
+        </Button>
+
+        <div className="flex items-center gap-1.5">
+          {questions.map((entry, index) => (
+            <span
+              key={entry._id}
+              className={`h-1.5 rounded-full transition-all ${
+                index === currentIndex
+                  ? 'w-5 bg-brand-500'
+                  : selected[String(entry._id)]
+                    ? 'w-1.5 bg-brand-300'
+                    : 'w-1.5 bg-ink-200'
+              }`}
+            />
+          ))}
+        </div>
+
+        {isLast ? (
+          <Button onClick={submit} disabled={!chosen || submitting}>
+            {submitting ? 'Saving…' : 'Finish'}
+          </Button>
         ) : (
-          <button
-            onClick={handleSubmit}
-            disabled={!selectedOptions[currentIndex]}
-            className="bg-green-500 p-3 rounded-full shadow-md mx-2 text-2xl"
+          <Button
+            onClick={() => setCurrentIndex((index) => Math.min(questions.length - 1, index + 1))}
+            disabled={!chosen}
           >
-            Submit
-          </button>
+            Next
+          </Button>
         )}
       </div>
     </div>

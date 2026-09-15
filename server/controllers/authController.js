@@ -1,6 +1,41 @@
 const User = require('../models/userModel');
 const bcrypt = require('bcrypt');
 const { validationResult } = require('express-validator');
+const signToken = require('../utils/signToken');
+const { sessionContext } = require('../utils/signToken');
+const { deliverVerification } = require('./accountController');
+const { toPoint, hasPoint, isValidLongitude, isValidLatitude } = require('../utils/geo');
+
+const MAX_FAILED_LOGINS = 8;
+const LOCKOUT_MS = 15 * 60 * 1000;
+
+/** The caller may see their own exact coordinates. Nobody else may. */
+const ownLocation = (user) =>
+  hasPoint(user.location)
+    ? {
+        longitude: user.location.coordinates[0],
+        latitude: user.location.coordinates[1],
+        updatedAt: user.location.updatedAt,
+      }
+    : undefined;
+
+const sanitizeUser = (user) => ({
+  _id: user._id,
+  name: user.name,
+  email: user.email,
+  age: user.age,
+  gender: user.gender,
+  avatar: user.avatar?.url ? user.avatar : undefined,
+  bio: user.bio,
+  interests: user.interests,
+  hobbies: user.hobbies,
+  location: ownLocation(user),
+  shareLocation: user.shareLocation !== false,
+  sharePresence: user.sharePresence !== false,
+  emailPrefs: { digest: user.emailPrefs?.digest !== false },
+  role: user.role,
+  isVerified: user.isVerified,
+});
 
 // Register user
 exports.register = async (req, res) => {
@@ -29,19 +64,29 @@ exports.register = async (req, res) => {
     // Create new user
     const user = await User.create({ name, email, password: hashedPassword, age, gender });
 
-    // Remove password from response
-    user.password = undefined;
+    await deliverVerification(user).catch((mailError) =>
+      console.error('verification email failed for', user.email, mailError.message)
+    );
 
     res.status(201).json({
       status: 'success',
+      token: await signToken(user._id, sessionContext(req)),
       data: {
-        user,
+        user: sanitizeUser(user),
       },
     });
   } catch (err) {
+    // Duplicate key from the unique index on email.
+    if (err.code === 11000) {
+      return res.status(400).json({ message: 'Email already exists' });
+    }
+    if (err.name === 'ValidationError') {
+      return res.status(400).json({ status: 'error', message: err.message });
+    }
+    console.error('register failed:', err);
     res.status(500).json({
       status: 'error',
-      message: err.message,
+      message: 'Something went wrong. Please try again.',
     });
   }
 };
@@ -56,106 +101,129 @@ exports.login = async (req, res) => {
     }
 
     // Find the user and include the password field
-    const user = await User.findOne({ email }).select('+password');
+    const user = await User.findOne({ email }).select(
+      '+password +failedLoginCount +lockedUntil'
+    );
+
+    if (user?.lockedUntil && user.lockedUntil > new Date()) {
+      const minutes = Math.ceil((user.lockedUntil - Date.now()) / 60000);
+      return res.status(429).json({
+        message:
+          'Too many failed attempts. Try again in ' + minutes + (minutes === 1 ? ' minute.' : ' minutes.'),
+      });
+    }
 
     if (!user || !(await bcrypt.compare(password, user.password))) {
+      if (user) {
+        user.failedLoginCount = (user.failedLoginCount || 0) + 1;
+        if (user.failedLoginCount >= MAX_FAILED_LOGINS) {
+          user.lockedUntil = new Date(Date.now() + LOCKOUT_MS);
+          user.failedLoginCount = 0;
+        }
+        await user.save({ validateModifiedOnly: true });
+      }
+      // Same message either way, so this cannot be used to probe for accounts.
       return res.status(401).json({ message: 'Incorrect email or password' });
     }
 
-    // Remove password from response
-    user.password = undefined;
+    if (user.failedLoginCount || user.lockedUntil) {
+      user.failedLoginCount = 0;
+      user.lockedUntil = undefined;
+      await user.save({ validateModifiedOnly: true });
+    }
 
     res.status(200).json({
       status: 'success',
+      token: await signToken(user._id, sessionContext(req)),
       data: {
-        user,
+        user: sanitizeUser(user),
       },
     });
   } catch (err) {
+    console.error('login failed:', err);
     res.status(500).json({
       status: 'error',
-      message: err.message,
+      message: 'Something went wrong. Please try again.',
     });
   }
 };
 
-// Submit hobbies
+// Submit hobbies for the logged-in user
 exports.submitHobbies = async (req, res) => {
   try {
-    const { email, hobbies } = req.body;
+    const { hobbies } = req.body;
 
-    // Validate input
-    if (!email || !hobbies) {
-      return res.status(400).json({ message: 'Email and hobbies are required' });
+    if (!hobbies || typeof hobbies !== 'object' || Array.isArray(hobbies)) {
+      return res.status(400).json({ message: 'hobbies must be an object of answers' });
     }
 
-    // Find the user by email
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-
-    // Update user's hobbies
+    const user = req.user;
     user.hobbies = hobbies;
-    await user.save();
+    // password is not selected on this doc, so only validate what we changed
+    await user.save({ validateModifiedOnly: true });
 
     res.status(200).json({
       status: 'success',
       message: 'Hobbies updated successfully',
-    });
-  } catch (err) {
-    res.status(500).json({
-      status: 'error',
-      message: err.message,
-    });
-  }
-};
-
-exports.showUsers = async (req, res) => {
-  try {
-    const users = await User.find();
-
-    res.status(200).json({
-      status: 'success',
       data: {
-        users,
+        hobbies: user.hobbies,
       },
     });
   } catch (err) {
+    console.error('submitHobbies failed:', err);
     res.status(500).json({
       status: 'error',
-      message: err.message,
+      message: 'Something went wrong. Please try again.',
     });
   }
 };
 
+// Update the logged-in user's location
 exports.updateLocation = async (req, res) => {
   try {
-    const { email, longitude, latitude } = req.body;
+    const longitude = Number(req.body.longitude);
+    const latitude = Number(req.body.latitude);
 
-    if (!email || longitude == null || latitude == null) {
-      return res.status(400).json({ message: 'send everything bruh email,longitude and latitude'});
+    if (!Number.isFinite(longitude) || !Number.isFinite(latitude)) {
+      return res.status(400).json({ message: 'longitude and latitude must be numbers' });
+    }
+    if (!isValidLongitude(longitude) || !isValidLatitude(latitude)) {
+      return res.status(400).json({ message: 'longitude or latitude is out of range' });
     }
 
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(404).json({ message: 'cannot find user' });
-    }
-
-    user.location = { longitude, latitude };
-    await user.save();
+    const user = req.user;
+    user.location = toPoint(longitude, latitude);
+    // password is not selected on this doc, so only validate what we changed
+    await user.save({ validateModifiedOnly: true });
 
     res.status(200).json({
       status: 'success',
       message: 'Location updated successfully',
       data: {
-        location: user.location
-      }
+        // Only ever the caller's own coordinates.
+        location: {
+          longitude,
+          latitude,
+          updatedAt: user.location.updatedAt,
+        },
+        shareLocation: user.shareLocation !== false,
+      },
     });
   } catch (err) {
+    console.error('updateLocation failed:', err);
     res.status(500).json({
       status: 'error',
-      message: err.message,
+      message: 'Something went wrong. Please try again.',
     });
   }
+};
+
+// Return the logged-in user's own profile
+exports.getMe = async (req, res) => {
+  res.status(200).json({
+    status: 'success',
+    data: {
+      user: sanitizeUser(req.user),
+    },
+  });
 };

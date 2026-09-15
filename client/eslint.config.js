@@ -5,7 +5,19 @@ import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
 
 export default [
-  { ignores: ['dist'] },
+  { ignores: ['dist', 'playwright-report', 'test-results'] },
+
+  // Test and tooling files run in Node, not the browser.
+  {
+    files: ['playwright.config.js', 'tests/**/*.js', '*.config.js'],
+    languageOptions: {
+      ecmaVersion: 'latest',
+      sourceType: 'module',
+      globals: { ...globals.node },
+    },
+    rules: { ...js.configs.recommended.rules },
+  },
+
   {
     files: ['**/*.{js,jsx}'],
     languageOptions: {
@@ -29,6 +41,10 @@ export default [
       ...react.configs['jsx-runtime'].rules,
       ...reactHooks.configs.recommended.rules,
       'react/jsx-no-target-blank': 'off',
+      // This project does not use PropTypes; validation lives in the API layer.
+      'react/prop-types': 'off',
+      // react-three-fiber elements use props this rule does not know about.
+      'react/no-unknown-property': 'off',
       'react-refresh/only-export-components': [
         'warn',
         { allowConstantExport: true },

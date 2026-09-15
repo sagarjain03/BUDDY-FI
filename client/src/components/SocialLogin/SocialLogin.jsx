@@ -1,38 +1,40 @@
-import React, { useEffect, useRef } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faGoogle, faFacebook, faInstagram } from '@fortawesome/free-brands-svg-icons';
-import gsap from 'gsap';
+import { FaGoogle, FaFacebookF, FaInstagram } from 'react-icons/fa';
 
-const SocialLogin = () => {
-  const iconsRef = useRef(null);
+const PROVIDERS = [
+  { label: 'Google', Icon: FaGoogle },
+  { label: 'Facebook', Icon: FaFacebookF },
+  { label: 'Instagram', Icon: FaInstagram },
+];
 
-  useEffect(() => {
-    gsap.fromTo(
-      iconsRef.current.children,
-      { opacity: 0, y: 20 },
-      {
-        opacity: 1,
-        y: 0,
-        duration: 1,
-        stagger: 0.3,
-        ease: 'power3.out'
-      }
-    );
-  }, []);
-
-  return (
-    <div className="mt-4 text-center">
-      <p className="text-sm mb-4">Or</p>
-      <div
-        ref={iconsRef}
-        className="flex justify-center space-x-4"
-      >
-        <FontAwesomeIcon icon={faGoogle} size="2x" className="text-red-600 cursor-pointer" />
-        <FontAwesomeIcon icon={faFacebook} size="2x" className="text-blue-600 cursor-pointer" />
-        <FontAwesomeIcon icon={faInstagram} size="2x" className="text-pink-600 cursor-pointer" />
-      </div>
+/**
+ * Placeholder social buttons. They are disabled until the OAuth flows exist,
+ * rather than looking clickable and doing nothing.
+ */
+const SocialLogin = () => (
+  <div>
+    <div className="my-6 flex items-center gap-3">
+      <span className="h-px flex-1 bg-ink-100" />
+      <span className="text-xs font-medium uppercase tracking-wider text-ink-400">
+        or continue with
+      </span>
+      <span className="h-px flex-1 bg-ink-100" />
     </div>
-  );
-};
+
+    <div className="grid grid-cols-3 gap-3">
+      {PROVIDERS.map(({ label, Icon }) => (
+        <button
+          key={label}
+          type="button"
+          disabled
+          title={`${label} sign-in is coming soon`}
+          className="btn btn-outline btn-md"
+          aria-label={`Continue with ${label} (coming soon)`}
+        >
+          <Icon className="text-base" />
+        </button>
+      ))}
+    </div>
+  </div>
+);
 
 export default SocialLogin;
